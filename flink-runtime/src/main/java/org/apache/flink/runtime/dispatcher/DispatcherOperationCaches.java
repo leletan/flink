@@ -32,6 +32,8 @@ public class DispatcherOperationCaches {
     private final CompletedOperationCache<AsynchronousJobOperationKey, String>
             savepointTriggerCache;
 
+    private final CompletedOperationCache<AsynchronousJobOperationKey, Long> checkpointTriggerCache;
+
     @VisibleForTesting
     public DispatcherOperationCaches() {
         this(RestOptions.ASYNC_OPERATION_STORE_DURATION.defaultValue());
@@ -40,13 +42,19 @@ public class DispatcherOperationCaches {
     @VisibleForTesting
     public DispatcherOperationCaches(Duration cacheDuration) {
         savepointTriggerCache = new CompletedOperationCache<>(cacheDuration);
+        checkpointTriggerCache = new CompletedOperationCache<>(cacheDuration);
     }
 
     public CompletedOperationCache<AsynchronousJobOperationKey, String> getSavepointTriggerCache() {
         return savepointTriggerCache;
     }
 
+    public CompletedOperationCache<AsynchronousJobOperationKey, Long> getCheckpointTriggerCache() {
+        return checkpointTriggerCache;
+    }
+
     public CompletableFuture<Void> shutdownCaches() {
-        return savepointTriggerCache.closeAsync();
+        return CompletableFuture.allOf(
+                checkpointTriggerCache.closeAsync(), savepointTriggerCache.closeAsync());
     }
 }

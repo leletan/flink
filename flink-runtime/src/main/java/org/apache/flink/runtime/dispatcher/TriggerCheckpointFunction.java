@@ -16,23 +16,20 @@
  * limitations under the License.
  */
 
-package org.apache.flink.runtime.checkpoint;
+package org.apache.flink.runtime.dispatcher;
 
-import org.apache.flink.annotation.Internal;
+import org.apache.flink.api.common.JobID;
+import org.apache.flink.api.common.time.Time;
+import org.apache.flink.runtime.checkpoint.CheckpointProperties;
 
-/** Policy for whether checkpoints are retained after a job terminates. */
-@Internal
-public enum CheckpointRetentionPolicy {
+import java.util.concurrent.CompletableFuture;
 
-    /** Full Checkpoints should be retained on cancellation and failure. */
-    FULL_RETAIN_ON_CANCELLATION,
-
-    /** Checkpoints should be retained on cancellation and failure. */
-    RETAIN_ON_CANCELLATION,
-
-    /** Checkpoints should be retained on failure, but not on cancellation. */
-    RETAIN_ON_FAILURE,
-
-    /** Checkpoints should always be cleaned up when an application reaches a terminal state. */
-    NEVER_RETAIN_AFTER_TERMINATION
+/**
+ * Wrapper interface for functions triggering savepoints. Currently only serves to shorten
+ * signatures.
+ */
+@FunctionalInterface
+public interface TriggerCheckpointFunction {
+    CompletableFuture<Long> apply(
+            JobID jobId, CheckpointProperties checkpointProperties, Time timeout);
 }

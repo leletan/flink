@@ -511,6 +511,20 @@ public class CheckpointCoordinator {
         return triggerCheckpointFromCheckpointThread(checkpointProperties, null, isPeriodic);
     }
 
+    /**
+     * Triggers one new checkpoint with the given checkpoint properties. If the given checkpoint
+     * properties is null, then it will fall back to use the CheckpointCoordinator's
+     * checkpointProperties. The return value is a future. It completes when the checkpoint
+     * triggered finishes or an error occurred.
+     *
+     * @param props specifies the properties of the checkpoint to trigger.
+     * @return a future to the completed checkpoint.
+     */
+    public CompletableFuture<CompletedCheckpoint> triggerCheckpoint(CheckpointProperties props) {
+        CheckpointProperties properties = props == null ? checkpointProperties : props;
+        return triggerCheckpointFromCheckpointThread(properties, null, false);
+    }
+
     @VisibleForTesting
     CompletableFuture<CompletedCheckpoint> triggerCheckpoint(
             CheckpointProperties props,

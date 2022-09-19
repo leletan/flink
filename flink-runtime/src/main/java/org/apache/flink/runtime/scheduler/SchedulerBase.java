@@ -36,6 +36,7 @@ import org.apache.flink.runtime.checkpoint.CheckpointException;
 import org.apache.flink.runtime.checkpoint.CheckpointFailureReason;
 import org.apache.flink.runtime.checkpoint.CheckpointIDCounter;
 import org.apache.flink.runtime.checkpoint.CheckpointMetrics;
+import org.apache.flink.runtime.checkpoint.CheckpointProperties;
 import org.apache.flink.runtime.checkpoint.CheckpointRecoveryFactory;
 import org.apache.flink.runtime.checkpoint.CheckpointScheduling;
 import org.apache.flink.runtime.checkpoint.CheckpointsCleaner;
@@ -878,7 +879,7 @@ public abstract class SchedulerBase implements SchedulerNG, CheckpointScheduling
     }
 
     @Override
-    public CompletableFuture<String> triggerCheckpoint() {
+    public CompletableFuture<CompletedCheckpoint> triggerCheckpoint(CheckpointProperties props) {
         mainThreadExecutor.assertRunningInMainThread();
 
         final CheckpointCoordinator checkpointCoordinator =
@@ -890,8 +891,7 @@ public abstract class SchedulerBase implements SchedulerNG, CheckpointScheduling
         log.info("Triggering a manual checkpoint for job {}.", jobID);
 
         return checkpointCoordinator
-                .triggerCheckpoint(false)
-                .thenApply(CompletedCheckpoint::getExternalPointer)
+                .triggerCheckpoint(props)
                 .handleAsync(
                         (path, throwable) -> {
                             if (throwable != null) {

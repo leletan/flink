@@ -33,6 +33,8 @@ import org.apache.flink.runtime.blocklist.BlocklistContext;
 import org.apache.flink.runtime.blocklist.BlocklistHandler;
 import org.apache.flink.runtime.blocklist.BlocklistUtils;
 import org.apache.flink.runtime.checkpoint.CheckpointMetrics;
+import org.apache.flink.runtime.checkpoint.CheckpointProperties;
+import org.apache.flink.runtime.checkpoint.CompletedCheckpoint;
 import org.apache.flink.runtime.checkpoint.TaskStateSnapshot;
 import org.apache.flink.runtime.clusterframework.types.AllocationID;
 import org.apache.flink.runtime.clusterframework.types.ResourceID;
@@ -854,6 +856,12 @@ public class JobMaster extends FencedRpcEndpoint<JobMasterId>
     }
 
     @Override
+    public CompletableFuture<CompletedCheckpoint> triggerCheckpoint(
+            @Nullable final CheckpointProperties checkpointProperties, final Time timeout) {
+        return schedulerNG.triggerCheckpoint(checkpointProperties);
+    }
+
+    @Override
     public CompletableFuture<String> triggerSavepoint(
             @Nullable final String targetDirectory,
             final boolean cancelJob,
@@ -861,11 +869,6 @@ public class JobMaster extends FencedRpcEndpoint<JobMasterId>
             final Time timeout) {
 
         return schedulerNG.triggerSavepoint(targetDirectory, cancelJob, formatType);
-    }
-
-    @Override
-    public CompletableFuture<String> triggerCheckpoint(Time timeout) {
-        return schedulerNG.triggerCheckpoint();
     }
 
     @Override

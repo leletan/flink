@@ -34,9 +34,11 @@ import org.apache.flink.runtime.checkpoint.CheckpointException;
 import org.apache.flink.runtime.checkpoint.CheckpointFailureReason;
 import org.apache.flink.runtime.checkpoint.CheckpointIDCounter;
 import org.apache.flink.runtime.checkpoint.CheckpointMetrics;
+import org.apache.flink.runtime.checkpoint.CheckpointProperties;
 import org.apache.flink.runtime.checkpoint.CheckpointRecoveryFactory;
 import org.apache.flink.runtime.checkpoint.CheckpointScheduling;
 import org.apache.flink.runtime.checkpoint.CheckpointsCleaner;
+import org.apache.flink.runtime.checkpoint.CompletedCheckpoint;
 import org.apache.flink.runtime.checkpoint.CompletedCheckpointStore;
 import org.apache.flink.runtime.checkpoint.TaskStateSnapshot;
 import org.apache.flink.runtime.client.JobExecutionException;
@@ -623,10 +625,10 @@ public class AdaptiveScheduler
     }
 
     @Override
-    public CompletableFuture<String> triggerCheckpoint() {
+    public CompletableFuture<CompletedCheckpoint> triggerCheckpoint(CheckpointProperties props) {
         return state.tryCall(
                         StateWithExecutionGraph.class,
-                        StateWithExecutionGraph::triggerCheckpoint,
+                        stateWithExecutionGraph -> stateWithExecutionGraph.triggerCheckpoint(props),
                         "triggerCheckpoint")
                 .orElse(
                         FutureUtils.completedExceptionally(

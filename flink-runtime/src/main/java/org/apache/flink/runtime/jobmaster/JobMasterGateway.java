@@ -25,6 +25,8 @@ import org.apache.flink.api.common.time.Time;
 import org.apache.flink.core.execution.SavepointFormatType;
 import org.apache.flink.runtime.blocklist.BlocklistListener;
 import org.apache.flink.runtime.checkpoint.CheckpointCoordinatorGateway;
+import org.apache.flink.runtime.checkpoint.CheckpointProperties;
+import org.apache.flink.runtime.checkpoint.CompletedCheckpoint;
 import org.apache.flink.runtime.clusterframework.types.AllocationID;
 import org.apache.flink.runtime.clusterframework.types.ResourceID;
 import org.apache.flink.runtime.execution.ExecutionState;
@@ -221,10 +223,24 @@ public interface JobMasterGateway
     /**
      * Triggers taking a checkpoint of the executed job.
      *
+     * @param checkpointProperties to determine how checkpoint should be taken or null if the
+     *     existing checkpoint property should be used
+     * @param timeout for the rpc call
+     * @return Future which is completed with the savepoint path once completed
+     */
+    CompletableFuture<CompletedCheckpoint> triggerCheckpoint(
+            @Nullable final CheckpointProperties checkpointProperties,
+            @RpcTimeout final Time timeout);
+
+    /**
+     * Triggers taking a checkpoint of the executed job.
+     *
      * @param timeout for the rpc call
      * @return Future which is completed with the checkpoint path once completed
      */
-    CompletableFuture<String> triggerCheckpoint(@RpcTimeout final Time timeout);
+    default CompletableFuture<String> triggerCheckpoint(@RpcTimeout final Time timeout) {
+        return triggerCheckpoint(null, timeout).thenApply(CompletedCheckpoint::getExternalPointer);
+    }
 
     /**
      * Stops the job with a savepoint.

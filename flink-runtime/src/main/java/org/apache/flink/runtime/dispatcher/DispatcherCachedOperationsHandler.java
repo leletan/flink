@@ -21,6 +21,7 @@ package org.apache.flink.runtime.dispatcher;
 import org.apache.flink.annotation.VisibleForTesting;
 import org.apache.flink.api.common.time.Time;
 import org.apache.flink.core.execution.SavepointFormatType;
+import org.apache.flink.runtime.checkpoint.CheckpointProperties;
 import org.apache.flink.runtime.messages.Acknowledge;
 import org.apache.flink.runtime.rest.handler.async.CompletedOperationCache;
 import org.apache.flink.runtime.rest.handler.async.OperationResult;
@@ -39,15 +40,22 @@ public class DispatcherCachedOperationsHandler {
     private final CompletedOperationCache<AsynchronousJobOperationKey, String>
             savepointTriggerCache;
 
+    private final CompletedOperationCache<AsynchronousJobOperationKey, Long> checkpointTriggerCache;
+
+    private final TriggerCheckpointFunction triggerCheckpointFunction;
+
     private final TriggerSavepointFunction triggerSavepointFunction;
 
     private final TriggerSavepointFunction stopWithSavepointFunction;
 
     DispatcherCachedOperationsHandler(
             DispatcherOperationCaches operationCaches,
+            TriggerCheckpointFunction triggerCheckpointFunction,
             TriggerSavepointFunction triggerSavepointFunction,
             TriggerSavepointFunction stopWithSavepointFunction) {
         this(
+                triggerCheckpointFunction,
+                operationCaches.getCheckpointTriggerCache(),
                 triggerSavepointFunction,
                 stopWithSavepointFunction,
                 operationCaches.getSavepointTriggerCache());
@@ -55,12 +63,41 @@ public class DispatcherCachedOperationsHandler {
 
     @VisibleForTesting
     DispatcherCachedOperationsHandler(
+            TriggerCheckpointFunction triggerCheckpointFunction,
+            CompletedOperationCache<AsynchronousJobOperationKey, Long> checkpointTriggerCache,
             TriggerSavepointFunction triggerSavepointFunction,
             TriggerSavepointFunction stopWithSavepointFunction,
             CompletedOperationCache<AsynchronousJobOperationKey, String> savepointTriggerCache) {
+        this.triggerCheckpointFunction = triggerCheckpointFunction;
+        this.checkpointTriggerCache = checkpointTriggerCache;
         this.triggerSavepointFunction = triggerSavepointFunction;
         this.stopWithSavepointFunction = stopWithSavepointFunction;
         this.savepointTriggerCache = savepointTriggerCache;
+    }
+
+    public CompletableFuture<Acknowledge> triggerCheckpoint(
+            AsynchronousJobOperationKey operationKey,
+            CheckpointProperties checkpointProperties,
+            Time timeout) {
+
+        if (!checkpointTriggerCache.containsOperation(operationKey)) {
+            checkpointTriggerCache.registerOngoingOperation(
+                    operationKey,
+                    triggerCheckpointFunction.apply(
+                            operationKey.getJobId(), checkpointProperties, timeout));
+        }
+
+        return CompletableFuture.completedFuture(Acknowledge.get());
+    }
+
+    public CompletableFuture<OperationResult<Long>> getCheckpointStatus(
+            AsynchronousJobOperationKey operationKey) {
+        return checkpointTriggerCache
+                .get(operationKey)
+                .map(CompletableFuture::completedFuture)
+                .orElse(
+                        FutureUtils.completedExceptionally(
+                                new UnknownOperationKeyException(operationKey)));
     }
 
     public CompletableFuture<Acknowledge> triggerSavepoint(

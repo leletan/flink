@@ -28,6 +28,8 @@ import org.apache.flink.core.execution.SavepointFormatType;
 import org.apache.flink.queryablestate.KvStateID;
 import org.apache.flink.runtime.blocklist.BlockedNode;
 import org.apache.flink.runtime.checkpoint.CheckpointMetrics;
+import org.apache.flink.runtime.checkpoint.CheckpointProperties;
+import org.apache.flink.runtime.checkpoint.CompletedCheckpoint;
 import org.apache.flink.runtime.checkpoint.TaskStateSnapshot;
 import org.apache.flink.runtime.clusterframework.types.AllocationID;
 import org.apache.flink.runtime.clusterframework.types.ResourceID;
@@ -133,7 +135,9 @@ public class TestingJobMasterGateway implements JobMasterGateway {
     private final TriFunction<String, Boolean, SavepointFormatType, CompletableFuture<String>>
             triggerSavepointFunction;
 
-    @Nonnull private final Supplier<CompletableFuture<String>> triggerCheckpointFunction;
+    @Nonnull
+    private final Function<CheckpointProperties, CompletableFuture<CompletedCheckpoint>>
+            triggerCheckpointFunction;
 
     @Nonnull
     private final TriFunction<String, Boolean, SavepointFormatType, CompletableFuture<String>>
@@ -236,7 +240,9 @@ public class TestingJobMasterGateway implements JobMasterGateway {
             @Nonnull
                     TriFunction<String, Boolean, SavepointFormatType, CompletableFuture<String>>
                             triggerSavepointFunction,
-            @Nonnull Supplier<CompletableFuture<String>> triggerCheckpointFunction,
+            @Nonnull
+                    Function<CheckpointProperties, CompletableFuture<CompletedCheckpoint>>
+                            triggerCheckpointFunction,
             @Nonnull
                     TriFunction<String, Boolean, SavepointFormatType, CompletableFuture<String>>
                             stopWithSavepointFunction,
@@ -412,8 +418,9 @@ public class TestingJobMasterGateway implements JobMasterGateway {
     }
 
     @Override
-    public CompletableFuture<String> triggerCheckpoint(Time timeout) {
-        return triggerCheckpointFunction.get();
+    public CompletableFuture<CompletedCheckpoint> triggerCheckpoint(
+            CheckpointProperties props, Time timeout) {
+        return triggerCheckpointFunction.apply(props);
     }
 
     @Override

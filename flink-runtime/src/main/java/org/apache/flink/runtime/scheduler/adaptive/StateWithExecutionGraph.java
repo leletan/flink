@@ -25,6 +25,7 @@ import org.apache.flink.queryablestate.KvStateID;
 import org.apache.flink.runtime.accumulators.AccumulatorSnapshot;
 import org.apache.flink.runtime.checkpoint.CheckpointCoordinator;
 import org.apache.flink.runtime.checkpoint.CheckpointMetrics;
+import org.apache.flink.runtime.checkpoint.CheckpointProperties;
 import org.apache.flink.runtime.checkpoint.CompletedCheckpoint;
 import org.apache.flink.runtime.checkpoint.TaskStateSnapshot;
 import org.apache.flink.runtime.execution.ExecutionState;
@@ -275,7 +276,7 @@ abstract class StateWithExecutionGraph implements State {
                         context.getMainThreadExecutor());
     }
 
-    CompletableFuture<String> triggerCheckpoint() {
+    CompletableFuture<CompletedCheckpoint> triggerCheckpoint(CheckpointProperties props) {
         final CheckpointCoordinator checkpointCoordinator =
                 executionGraph.getCheckpointCoordinator();
         final JobID jobID = executionGraph.getJobID();
@@ -286,8 +287,7 @@ abstract class StateWithExecutionGraph implements State {
         logger.info("Triggering a checkpoint for job {}.", jobID);
 
         return checkpointCoordinator
-                .triggerCheckpoint(false)
-                .thenApply(CompletedCheckpoint::getExternalPointer)
+                .triggerCheckpoint(props)
                 .handleAsync(
                         (path, throwable) -> {
                             if (throwable != null) {

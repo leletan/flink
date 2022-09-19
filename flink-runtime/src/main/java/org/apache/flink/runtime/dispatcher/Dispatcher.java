@@ -32,7 +32,9 @@ import org.apache.flink.configuration.HighAvailabilityOptions;
 import org.apache.flink.core.execution.SavepointFormatType;
 import org.apache.flink.metrics.MetricGroup;
 import org.apache.flink.runtime.blob.BlobServer;
+import org.apache.flink.runtime.checkpoint.CheckpointProperties;
 import org.apache.flink.runtime.checkpoint.Checkpoints;
+import org.apache.flink.runtime.checkpoint.CompletedCheckpoint;
 import org.apache.flink.runtime.client.DuplicateJobSubmissionException;
 import org.apache.flink.runtime.client.JobSubmissionException;
 import org.apache.flink.runtime.clusterframework.ApplicationStatus;
@@ -271,6 +273,7 @@ public abstract class Dispatcher extends FencedRpcEndpoint<DispatcherId>
         this.dispatcherCachedOperationsHandler =
                 new DispatcherCachedOperationsHandler(
                         dispatcherServices.getOperationCaches(),
+                        this::triggerCheckpointAndGetCheckpointID,
                         this::triggerSavepointAndGetLocation,
                         this::stopWithSavepointAndGetLocation);
 
@@ -900,6 +903,32 @@ public abstract class Dispatcher extends FencedRpcEndpoint<DispatcherId>
     public CompletableFuture<String> triggerCheckpoint(JobID jobID, Time timeout) {
         return performOperationOnJobMasterGateway(
                 jobID, gateway -> gateway.triggerCheckpoint(timeout));
+    }
+
+    @Override
+    public CompletableFuture<Acknowledge> triggerCheckpoint(
+            AsynchronousJobOperationKey operationKey,
+            CheckpointProperties checkpointProperties,
+            Time timeout) {
+        return dispatcherCachedOperationsHandler.triggerCheckpoint(
+                operationKey, checkpointProperties, timeout);
+    }
+
+    @Override
+    public CompletableFuture<OperationResult<Long>> getTriggeredCheckpointStatus(
+            AsynchronousJobOperationKey operationKey) {
+        return dispatcherCachedOperationsHandler.getCheckpointStatus(operationKey);
+    }
+
+    public CompletableFuture<Long> triggerCheckpointAndGetCheckpointID(
+            final JobID jobID,
+            final CheckpointProperties checkpointProperties,
+            final Time timeout) {
+        return performOperationOnJobMasterGateway(
+                jobID,
+                gateway ->
+                        gateway.triggerCheckpoint(checkpointProperties, timeout)
+                                .thenApply(CompletedCheckpoint::getCheckpointID));
     }
 
     @Override

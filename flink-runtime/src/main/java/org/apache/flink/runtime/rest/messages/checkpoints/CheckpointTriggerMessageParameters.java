@@ -26,7 +26,7 @@ import org.apache.flink.runtime.rest.messages.MessageQueryParameter;
 import java.util.Collection;
 import java.util.Collections;
 
-/** The parameters for triggering a savepoint. */
+/** The parameters for triggering a checkpoint. */
 public class CheckpointTriggerMessageParameters extends MessageParameters {
 
     public JobIDPathParameter jobID = new JobIDPathParameter();

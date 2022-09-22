@@ -28,12 +28,12 @@ import static org.apache.flink.configuration.description.TextElement.text;
 /** Describes the backup type in which a checkpoint should be taken. */
 @PublicEvolving
 public enum CheckpointBackupType implements DescribedEnum {
-    /** A backup type with the entire state check pointed, common for all state backends */
+    /** A backup type with the entire state check pointed, common for all state backends. */
     FULL("A backup type with the entire state check pointed, common for all state backends."),
 
     /**
      * A backup type that check points the difference between snapshots, specific for certain state
-     * backend
+     * backend.
      */
     INCREMENTAL(
             "A backup type that check points the difference between snapshots, specific for certain state backend.");

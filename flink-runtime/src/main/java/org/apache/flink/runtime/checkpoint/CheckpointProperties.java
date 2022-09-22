@@ -280,17 +280,6 @@ public class CheckpointProperties implements Serializable {
                     false, // Retain on suspension
                     false);
 
-    private static final CheckpointProperties CHECKPOINT_FULL_RETAINED_ON_CANCELLATION =
-            new CheckpointProperties(
-                    false,
-                    CheckpointType.FULL_CHECKPOINT,
-                    true,
-                    true, // Delete on success
-                    false, // Retain on cancellation
-                    false, // Retain on failure
-                    false, // Retain on suspension
-                    false);
-
     /**
      * Creates the checkpoint properties for a (manually triggered) savepoint.
      *
@@ -365,8 +354,6 @@ public class CheckpointProperties implements Serializable {
                 return CHECKPOINT_RETAINED_ON_FAILURE;
             case RETAIN_ON_CANCELLATION:
                 return CHECKPOINT_RETAINED_ON_CANCELLATION;
-            case FULL_RETAIN_ON_CANCELLATION:
-                return CHECKPOINT_FULL_RETAINED_ON_CANCELLATION;
             default:
                 throw new IllegalArgumentException("unknown policy: " + policy);
         }

@@ -24,9 +24,6 @@ import org.apache.flink.annotation.Internal;
 @Internal
 public enum CheckpointRetentionPolicy {
 
-    /** Full Checkpoints should be retained on cancellation and failure. */
-    FULL_RETAIN_ON_CANCELLATION,
-
     /** Checkpoints should be retained on cancellation and failure. */
     RETAIN_ON_CANCELLATION,
 

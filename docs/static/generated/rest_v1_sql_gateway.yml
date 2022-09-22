@@ -6,7 +6,7 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: v1/1.16-SNAPSHOT
+  version: v1/1.17-SNAPSHOT
 paths:
   /api_versions:
     get:
@@ -252,12 +252,12 @@ components:
     ResolvedExpression:
       type: object
       properties:
-        outputDataType:
-          $ref: '#/components/schemas/DataType'
         resolvedChildren:
           type: array
           items:
             $ref: '#/components/schemas/ResolvedExpression'
+        outputDataType:
+          $ref: '#/components/schemas/DataType'
         children:
           type: array
           items:
@@ -353,11 +353,11 @@ components:
     RowData:
       type: object
       properties:
-        rowKind:
-          $ref: '#/components/schemas/RowKind'
         arity:
           type: integer
           format: int32
+        rowKind:
+          $ref: '#/components/schemas/RowKind'
     Column:
       type: object
       properties:
@@ -367,9 +367,9 @@ components:
           $ref: '#/components/schemas/DataType'
         comment:
           type: string
-        physical:
-          type: boolean
         persisted:
+          type: boolean
+        physical:
           type: boolean
     TriggerId:
       pattern: "[0-9a-f]{32}"
@@ -422,6 +422,13 @@ components:
             $ref: '#/components/schemas/WatermarkSpec'
         primaryKey:
           $ref: '#/components/schemas/UniqueConstraint'
+        columnCount:
+          type: integer
+          format: int32
+        columnDataTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataType'
         columnNames:
           type: array
           items:
@@ -431,13 +438,6 @@ components:
           items:
             type: integer
             format: int32
-        columnCount:
-          type: integer
-          format: int32
-        columnDataTypes:
-          type: array
-          items:
-            $ref: '#/components/schemas/DataType'
     GetSessionConfigResponseBody:
       type: object
       properties:

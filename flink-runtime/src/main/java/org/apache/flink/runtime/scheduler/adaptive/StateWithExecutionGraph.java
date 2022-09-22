@@ -20,12 +20,12 @@ package org.apache.flink.runtime.scheduler.adaptive;
 
 import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.common.JobStatus;
+import org.apache.flink.core.execution.CheckpointBackupType;
 import org.apache.flink.core.execution.SavepointFormatType;
 import org.apache.flink.queryablestate.KvStateID;
 import org.apache.flink.runtime.accumulators.AccumulatorSnapshot;
 import org.apache.flink.runtime.checkpoint.CheckpointCoordinator;
 import org.apache.flink.runtime.checkpoint.CheckpointMetrics;
-import org.apache.flink.runtime.checkpoint.CheckpointProperties;
 import org.apache.flink.runtime.checkpoint.CompletedCheckpoint;
 import org.apache.flink.runtime.checkpoint.TaskStateSnapshot;
 import org.apache.flink.runtime.execution.ExecutionState;
@@ -276,7 +276,8 @@ abstract class StateWithExecutionGraph implements State {
                         context.getMainThreadExecutor());
     }
 
-    CompletableFuture<CompletedCheckpoint> triggerCheckpoint(CheckpointProperties props) {
+    CompletableFuture<CompletedCheckpoint> triggerCheckpoint(
+            CheckpointBackupType checkpointBackupType) {
         final CheckpointCoordinator checkpointCoordinator =
                 executionGraph.getCheckpointCoordinator();
         final JobID jobID = executionGraph.getJobID();
@@ -287,7 +288,7 @@ abstract class StateWithExecutionGraph implements State {
         logger.info("Triggering a checkpoint for job {}.", jobID);
 
         return checkpointCoordinator
-                .triggerCheckpoint(props)
+                .triggerCheckpoint(checkpointBackupType)
                 .handleAsync(
                         (path, throwable) -> {
                             if (throwable != null) {

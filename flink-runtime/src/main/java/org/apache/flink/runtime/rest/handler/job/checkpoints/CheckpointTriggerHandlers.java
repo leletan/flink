@@ -20,8 +20,6 @@ package org.apache.flink.runtime.rest.handler.job.checkpoints;
 
 import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.common.time.Time;
-import org.apache.flink.runtime.checkpoint.CheckpointProperties;
-import org.apache.flink.runtime.checkpoint.CheckpointRetentionPolicy;
 import org.apache.flink.runtime.dispatcher.UnknownOperationKeyException;
 import org.apache.flink.runtime.rest.handler.AbstractRestHandler;
 import org.apache.flink.runtime.rest.handler.HandlerRequest;
@@ -65,16 +63,15 @@ import java.util.concurrent.CompletionException;
  *
  * <p>A checkpoint is triggered by sending an HTTP {@code POST} request to {@code
  * /jobs/:jobid/checkpoints}. The HTTP request may contain a JSON body to specify a customized
- * {@link TriggerId} a and {@link org.apache.flink.runtime.checkpoint.CheckpointRetentionPolicy},
- * e.g.,
+ * {@link TriggerId} and a {@link org.apache.flink.core.execution.CheckpointBackupType}, e.g.,
  *
  * <pre>
- * { "triggerId": "7d273f5a62eb4730b9dea8e833733c1e", "checkpointRetentionPolicy": "RETAIN_ON_CANCELLATION" }
+ * { "triggerId": "7d273f5a62eb4730b9dea8e833733c1e", "checkpointBackupType": "FULL" }
  * </pre>
  *
- * <p>If the body is omitted, or the field {@code checkpointRetentionPolicy} is {@code null}, the
- * default checkpointRetentionPolicy as specified by {@link
- * CheckpointRetentionPolicy#NEVER_RETAIN_AFTER_TERMINATION} will be used. As written above, the
+ * <p>If the body is omitted, or the field {@code checkpointBackupType} is {@code null}, the default
+ * checkpointBackupType as specified by {@link
+ * org.apache.flink.core.execution.CheckpointBackupType#FULL} will be used. As written above, the
  * response will contain a request id, e.g.,
  *
  * <pre>
@@ -143,12 +140,10 @@ public class CheckpointTriggerHandlers {
                 throws RestHandlerException {
             final AsynchronousJobOperationKey operationKey = createOperationKey(request);
 
-            final CheckpointProperties checkpointProperties =
-                    CheckpointProperties.forCheckpoint(
-                            request.getRequestBody().getCheckpointRetentionPolicy());
-
             return gateway.triggerCheckpoint(
-                            operationKey, checkpointProperties, RpcUtils.INF_TIMEOUT)
+                            operationKey,
+                            request.getRequestBody().getCheckpointBackupType(),
+                            RpcUtils.INF_TIMEOUT)
                     .handle(
                             (acknowledge, throwable) -> {
                                 if (throwable == null) {

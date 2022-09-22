@@ -20,8 +20,8 @@ package org.apache.flink.runtime.dispatcher;
 
 import org.apache.flink.annotation.VisibleForTesting;
 import org.apache.flink.api.common.time.Time;
+import org.apache.flink.core.execution.CheckpointBackupType;
 import org.apache.flink.core.execution.SavepointFormatType;
-import org.apache.flink.runtime.checkpoint.CheckpointProperties;
 import org.apache.flink.runtime.messages.Acknowledge;
 import org.apache.flink.runtime.rest.handler.async.CompletedOperationCache;
 import org.apache.flink.runtime.rest.handler.async.OperationResult;
@@ -77,14 +77,14 @@ public class DispatcherCachedOperationsHandler {
 
     public CompletableFuture<Acknowledge> triggerCheckpoint(
             AsynchronousJobOperationKey operationKey,
-            CheckpointProperties checkpointProperties,
+            CheckpointBackupType checkpointBackupType,
             Time timeout) {
 
         if (!checkpointTriggerCache.containsOperation(operationKey)) {
             checkpointTriggerCache.registerOngoingOperation(
                     operationKey,
                     triggerCheckpointFunction.apply(
-                            operationKey.getJobId(), checkpointProperties, timeout));
+                            operationKey.getJobId(), checkpointBackupType, timeout));
         }
 
         return CompletableFuture.completedFuture(Acknowledge.get());

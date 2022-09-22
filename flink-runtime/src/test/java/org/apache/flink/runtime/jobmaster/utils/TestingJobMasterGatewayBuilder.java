@@ -22,11 +22,11 @@ import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.api.java.tuple.Tuple5;
 import org.apache.flink.api.java.tuple.Tuple6;
+import org.apache.flink.core.execution.CheckpointBackupType;
 import org.apache.flink.core.execution.SavepointFormatType;
 import org.apache.flink.queryablestate.KvStateID;
 import org.apache.flink.runtime.blocklist.BlockedNode;
 import org.apache.flink.runtime.checkpoint.CheckpointMetrics;
-import org.apache.flink.runtime.checkpoint.CheckpointProperties;
 import org.apache.flink.runtime.checkpoint.CompletedCheckpoint;
 import org.apache.flink.runtime.checkpoint.TaskStateSnapshot;
 import org.apache.flink.runtime.clusterframework.types.AllocationID;
@@ -127,7 +127,7 @@ public class TestingJobMasterGatewayBuilder {
                                     targetDirectory != null
                                             ? targetDirectory
                                             : UUID.randomUUID().toString());
-    private Function<CheckpointProperties, CompletableFuture<CompletedCheckpoint>>
+    private Function<CheckpointBackupType, CompletableFuture<CompletedCheckpoint>>
             triggerCheckpointFunction = (prop) -> new CompletableFuture<>();
     private TriFunction<String, Boolean, SavepointFormatType, CompletableFuture<String>>
             stopWithSavepointFunction =
@@ -287,7 +287,7 @@ public class TestingJobMasterGatewayBuilder {
     }
 
     public TestingJobMasterGatewayBuilder setTriggerCheckpointFunction(
-            Function<CheckpointProperties, CompletableFuture<CompletedCheckpoint>>
+            Function<CheckpointBackupType, CompletableFuture<CompletedCheckpoint>>
                     triggerCheckpointFunction) {
         this.triggerCheckpointFunction = triggerCheckpointFunction;
         return this;

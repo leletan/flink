@@ -29,10 +29,10 @@ import org.apache.flink.configuration.CheckpointingOptions;
 import org.apache.flink.configuration.ClusterOptions;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.HighAvailabilityOptions;
+import org.apache.flink.core.execution.CheckpointBackupType;
 import org.apache.flink.core.execution.SavepointFormatType;
 import org.apache.flink.metrics.MetricGroup;
 import org.apache.flink.runtime.blob.BlobServer;
-import org.apache.flink.runtime.checkpoint.CheckpointProperties;
 import org.apache.flink.runtime.checkpoint.Checkpoints;
 import org.apache.flink.runtime.checkpoint.CompletedCheckpoint;
 import org.apache.flink.runtime.client.DuplicateJobSubmissionException;
@@ -908,10 +908,10 @@ public abstract class Dispatcher extends FencedRpcEndpoint<DispatcherId>
     @Override
     public CompletableFuture<Acknowledge> triggerCheckpoint(
             AsynchronousJobOperationKey operationKey,
-            CheckpointProperties checkpointProperties,
+            CheckpointBackupType checkpointBackupType,
             Time timeout) {
         return dispatcherCachedOperationsHandler.triggerCheckpoint(
-                operationKey, checkpointProperties, timeout);
+                operationKey, checkpointBackupType, timeout);
     }
 
     @Override
@@ -922,12 +922,12 @@ public abstract class Dispatcher extends FencedRpcEndpoint<DispatcherId>
 
     public CompletableFuture<Long> triggerCheckpointAndGetCheckpointID(
             final JobID jobID,
-            final CheckpointProperties checkpointProperties,
+            final CheckpointBackupType checkpointBackupType,
             final Time timeout) {
         return performOperationOnJobMasterGateway(
                 jobID,
                 gateway ->
-                        gateway.triggerCheckpoint(checkpointProperties, timeout)
+                        gateway.triggerCheckpoint(checkpointBackupType, timeout)
                                 .thenApply(CompletedCheckpoint::getCheckpointID));
     }
 

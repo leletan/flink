@@ -22,10 +22,10 @@ import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.common.JobStatus;
 import org.apache.flink.api.common.functions.AggregateFunction;
 import org.apache.flink.api.common.time.Time;
+import org.apache.flink.core.execution.CheckpointBackupType;
 import org.apache.flink.core.execution.SavepointFormatType;
 import org.apache.flink.runtime.blocklist.BlocklistListener;
 import org.apache.flink.runtime.checkpoint.CheckpointCoordinatorGateway;
-import org.apache.flink.runtime.checkpoint.CheckpointProperties;
 import org.apache.flink.runtime.checkpoint.CompletedCheckpoint;
 import org.apache.flink.runtime.clusterframework.types.AllocationID;
 import org.apache.flink.runtime.clusterframework.types.ResourceID;
@@ -223,13 +223,13 @@ public interface JobMasterGateway
     /**
      * Triggers taking a checkpoint of the executed job.
      *
-     * @param checkpointProperties to determine how checkpoint should be taken or null if the
+     * @param checkpointBackupType to determine how checkpoint should be taken or null if the
      *     existing checkpoint property should be used
      * @param timeout for the rpc call
-     * @return Future which is completed with the savepoint path once completed
+     * @return Future which is completed with the CompletedCheckpoint once completed
      */
     CompletableFuture<CompletedCheckpoint> triggerCheckpoint(
-            @Nullable final CheckpointProperties checkpointProperties,
+            @Nullable final CheckpointBackupType checkpointBackupType,
             @RpcTimeout final Time timeout);
 
     /**

@@ -69,4 +69,9 @@ public class CheckpointTriggerHeaders
     protected String getAsyncOperationDescription() {
         return "Triggers a checkpoint.";
     }
+
+    @Override
+    public String operationId() {
+        return "triggerCheckpoint";
+    }
 }

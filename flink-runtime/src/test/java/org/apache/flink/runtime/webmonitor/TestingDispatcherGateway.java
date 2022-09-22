@@ -22,8 +22,8 @@ import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.common.JobStatus;
 import org.apache.flink.api.common.time.Time;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.core.execution.CheckpointBackupType;
 import org.apache.flink.core.execution.SavepointFormatType;
-import org.apache.flink.runtime.checkpoint.CheckpointProperties;
 import org.apache.flink.runtime.clusterframework.ApplicationStatus;
 import org.apache.flink.runtime.clusterframework.types.ResourceID;
 import org.apache.flink.runtime.dispatcher.DispatcherGateway;
@@ -131,7 +131,7 @@ public final class TestingDispatcherGateway extends TestingRestfulGateway
             Supplier<CompletableFuture<ThreadDumpInfo>> requestThreadDumpSupplier,
             BiFunction<
                             AsynchronousJobOperationKey,
-                            CheckpointProperties,
+                            CheckpointBackupType,
                             CompletableFuture<Acknowledge>>
                     triggerCheckpointFunction,
             Function<AsynchronousJobOperationKey, CompletableFuture<OperationResult<Long>>>

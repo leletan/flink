@@ -20,11 +20,11 @@ package org.apache.flink.runtime.scheduler;
 
 import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.common.JobStatus;
+import org.apache.flink.core.execution.CheckpointBackupType;
 import org.apache.flink.core.execution.SavepointFormatType;
 import org.apache.flink.queryablestate.KvStateID;
 import org.apache.flink.runtime.accumulators.AccumulatorSnapshot;
 import org.apache.flink.runtime.checkpoint.CheckpointMetrics;
-import org.apache.flink.runtime.checkpoint.CheckpointProperties;
 import org.apache.flink.runtime.checkpoint.CompletedCheckpoint;
 import org.apache.flink.runtime.checkpoint.TaskStateSnapshot;
 import org.apache.flink.runtime.execution.ExecutionState;
@@ -62,7 +62,7 @@ public class TestingSchedulerNG implements SchedulerNG {
     private final Supplier<CompletableFuture<Void>> closeAsyncSupplier;
     private final TriFunction<String, Boolean, SavepointFormatType, CompletableFuture<String>>
             triggerSavepointFunction;
-    private final Function<CheckpointProperties, CompletableFuture<CompletedCheckpoint>>
+    private final Function<CheckpointBackupType, CompletableFuture<CompletedCheckpoint>>
             triggerCheckpointFunction;
     private final Consumer<Throwable> handleGlobalFailureConsumer;
 
@@ -72,7 +72,7 @@ public class TestingSchedulerNG implements SchedulerNG {
             Supplier<CompletableFuture<Void>> closeAsyncSupplier,
             TriFunction<String, Boolean, SavepointFormatType, CompletableFuture<String>>
                     triggerSavepointFunction,
-            Function<CheckpointProperties, CompletableFuture<CompletedCheckpoint>>
+            Function<CheckpointBackupType, CompletableFuture<CompletedCheckpoint>>
                     triggerCheckpointFunction,
             Consumer<Throwable> handleGlobalFailureConsumer) {
         this.jobTerminationFuture = jobTerminationFuture;
@@ -186,8 +186,9 @@ public class TestingSchedulerNG implements SchedulerNG {
     }
 
     @Override
-    public CompletableFuture<CompletedCheckpoint> triggerCheckpoint(CheckpointProperties props) {
-        return triggerCheckpointFunction.apply(props);
+    public CompletableFuture<CompletedCheckpoint> triggerCheckpoint(
+            CheckpointBackupType checkpointBackupType) {
+        return triggerCheckpointFunction.apply(checkpointBackupType);
     }
 
     @Override
@@ -245,7 +246,7 @@ public class TestingSchedulerNG implements SchedulerNG {
         private TriFunction<String, Boolean, SavepointFormatType, CompletableFuture<String>>
                 triggerSavepointFunction =
                         (ignoredA, ignoredB, formatType) -> new CompletableFuture<>();
-        private Function<CheckpointProperties, CompletableFuture<CompletedCheckpoint>>
+        private Function<CheckpointBackupType, CompletableFuture<CompletedCheckpoint>>
                 triggerCheckpointFunction = (ignored) -> new CompletableFuture<>();
         private Consumer<Throwable> handleGlobalFailureConsumer = (ignored) -> {};
 
@@ -272,7 +273,7 @@ public class TestingSchedulerNG implements SchedulerNG {
         }
 
         public Builder setTriggerCheckpointFunction(
-                Function<CheckpointProperties, CompletableFuture<CompletedCheckpoint>>
+                Function<CheckpointBackupType, CompletableFuture<CompletedCheckpoint>>
                         triggerCheckpointFunction) {
             this.triggerCheckpointFunction = triggerCheckpointFunction;
             return this;

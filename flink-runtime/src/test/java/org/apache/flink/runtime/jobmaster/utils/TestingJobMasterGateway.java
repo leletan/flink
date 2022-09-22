@@ -24,11 +24,11 @@ import org.apache.flink.api.common.time.Time;
 import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.api.java.tuple.Tuple5;
 import org.apache.flink.api.java.tuple.Tuple6;
+import org.apache.flink.core.execution.CheckpointBackupType;
 import org.apache.flink.core.execution.SavepointFormatType;
 import org.apache.flink.queryablestate.KvStateID;
 import org.apache.flink.runtime.blocklist.BlockedNode;
 import org.apache.flink.runtime.checkpoint.CheckpointMetrics;
-import org.apache.flink.runtime.checkpoint.CheckpointProperties;
 import org.apache.flink.runtime.checkpoint.CompletedCheckpoint;
 import org.apache.flink.runtime.checkpoint.TaskStateSnapshot;
 import org.apache.flink.runtime.clusterframework.types.AllocationID;
@@ -136,7 +136,7 @@ public class TestingJobMasterGateway implements JobMasterGateway {
             triggerSavepointFunction;
 
     @Nonnull
-    private final Function<CheckpointProperties, CompletableFuture<CompletedCheckpoint>>
+    private final Function<CheckpointBackupType, CompletableFuture<CompletedCheckpoint>>
             triggerCheckpointFunction;
 
     @Nonnull
@@ -241,7 +241,7 @@ public class TestingJobMasterGateway implements JobMasterGateway {
                     TriFunction<String, Boolean, SavepointFormatType, CompletableFuture<String>>
                             triggerSavepointFunction,
             @Nonnull
-                    Function<CheckpointProperties, CompletableFuture<CompletedCheckpoint>>
+                    Function<CheckpointBackupType, CompletableFuture<CompletedCheckpoint>>
                             triggerCheckpointFunction,
             @Nonnull
                     TriFunction<String, Boolean, SavepointFormatType, CompletableFuture<String>>
@@ -419,8 +419,8 @@ public class TestingJobMasterGateway implements JobMasterGateway {
 
     @Override
     public CompletableFuture<CompletedCheckpoint> triggerCheckpoint(
-            CheckpointProperties props, Time timeout) {
-        return triggerCheckpointFunction.apply(props);
+            CheckpointBackupType checkpointBackupType, Time timeout) {
+        return triggerCheckpointFunction.apply(checkpointBackupType);
     }
 
     @Override

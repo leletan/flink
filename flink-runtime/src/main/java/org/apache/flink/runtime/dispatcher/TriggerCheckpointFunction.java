@@ -20,16 +20,16 @@ package org.apache.flink.runtime.dispatcher;
 
 import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.common.time.Time;
-import org.apache.flink.runtime.checkpoint.CheckpointProperties;
+import org.apache.flink.core.execution.CheckpointBackupType;
 
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Wrapper interface for functions triggering savepoints. Currently only serves to shorten
+ * Wrapper interface for functions triggering checkpoints. Currently only serves to shorten
  * signatures.
  */
 @FunctionalInterface
 public interface TriggerCheckpointFunction {
     CompletableFuture<Long> apply(
-            JobID jobId, CheckpointProperties checkpointProperties, Time timeout);
+            JobID jobId, CheckpointBackupType checkpointBackupType, Time timeout);
 }

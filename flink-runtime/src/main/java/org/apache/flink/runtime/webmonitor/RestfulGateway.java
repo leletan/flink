@@ -22,8 +22,8 @@ import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.common.JobStatus;
 import org.apache.flink.api.common.time.Time;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.core.execution.CheckpointBackupType;
 import org.apache.flink.core.execution.SavepointFormatType;
-import org.apache.flink.runtime.checkpoint.CheckpointProperties;
 import org.apache.flink.runtime.checkpoint.CompletedCheckpoint;
 import org.apache.flink.runtime.clusterframework.types.ResourceID;
 import org.apache.flink.runtime.dispatcher.TriggerSavepointMode;
@@ -149,14 +149,14 @@ public interface RestfulGateway extends RpcGateway {
      * Triggers a checkpoint with the given savepoint directory as a target.
      *
      * @param operationKey the key of the operation, for deduplication purposes
-     * @param checkpointProperties Checkpoint Properties
+     * @param checkpointBackupType checkpoint backup type (full / incremental)
      * @param timeout Timeout for the asynchronous operation
      * @return A future to the {@link CompletedCheckpoint#getExternalPointer() external pointer} of
      *     the savepoint.
      */
     default CompletableFuture<Acknowledge> triggerCheckpoint(
             AsynchronousJobOperationKey operationKey,
-            CheckpointProperties checkpointProperties,
+            CheckpointBackupType checkpointBackupType,
             @RpcTimeout Time timeout) {
         throw new UnsupportedOperationException();
     }

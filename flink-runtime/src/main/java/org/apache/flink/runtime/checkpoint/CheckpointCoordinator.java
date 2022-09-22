@@ -21,6 +21,7 @@ package org.apache.flink.runtime.checkpoint;
 import org.apache.flink.annotation.VisibleForTesting;
 import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.core.execution.CheckpointBackupType;
 import org.apache.flink.core.execution.SavepointFormatType;
 import org.apache.flink.runtime.checkpoint.FinishedTaskStateProvider.PartialFinishingNotSupportedByStateException;
 import org.apache.flink.runtime.checkpoint.hooks.MasterHooks;
@@ -85,6 +86,8 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toMap;
+import static org.apache.flink.runtime.checkpoint.CheckpointType.CHECKPOINT;
+import static org.apache.flink.runtime.checkpoint.CheckpointType.FULL_CHECKPOINT;
 import static org.apache.flink.util.ExceptionUtils.findThrowable;
 import static org.apache.flink.util.Preconditions.checkArgument;
 import static org.apache.flink.util.Preconditions.checkNotNull;
@@ -512,16 +515,41 @@ public class CheckpointCoordinator {
     }
 
     /**
-     * Triggers one new checkpoint with the given checkpoint properties. If the given checkpoint
-     * properties is null, then it will fall back to use the CheckpointCoordinator's
+     * Triggers one new checkpoint with the given checkpointBackupType. If the given
+     * checkpointBackupType is null, then it will fall back to use the CheckpointCoordinator's
      * checkpointProperties. The return value is a future. It completes when the checkpoint
      * triggered finishes or an error occurred.
      *
-     * @param props specifies the properties of the checkpoint to trigger.
+     * @param checkpointBackupType specifies the back up type of the checkpoint to trigger.
      * @return a future to the completed checkpoint.
      */
-    public CompletableFuture<CompletedCheckpoint> triggerCheckpoint(CheckpointProperties props) {
-        CheckpointProperties properties = props == null ? checkpointProperties : props;
+    public CompletableFuture<CompletedCheckpoint> triggerCheckpoint(
+            @Nullable CheckpointBackupType checkpointBackupType) {
+
+        if (checkpointBackupType == null) {
+            return triggerCheckpointFromCheckpointThread(checkpointProperties, null, false);
+        }
+
+        final SnapshotType checkpointType;
+        if (checkpointBackupType == CheckpointBackupType.FULL) {
+            checkpointType = FULL_CHECKPOINT;
+        } else if (checkpointBackupType == CheckpointBackupType.INCREMENTAL) {
+            checkpointType = CHECKPOINT;
+        } else {
+            throw new IllegalArgumentException(
+                    "unknown checkpointBackupType: " + checkpointBackupType);
+        }
+
+        CheckpointProperties properties =
+                new CheckpointProperties(
+                        checkpointProperties.forceCheckpoint(),
+                        checkpointType,
+                        checkpointProperties.discardOnSubsumed(),
+                        checkpointProperties.discardOnJobFinished(),
+                        checkpointProperties.discardOnJobCancelled(),
+                        checkpointProperties.discardOnJobFailed(),
+                        checkpointProperties.discardOnJobSuspended(),
+                        checkpointProperties.isUnclaimed());
         return triggerCheckpointFromCheckpointThread(properties, null, false);
     }
 
@@ -748,7 +776,7 @@ public class CheckpointCoordinator {
 
         final SnapshotType type;
         if (this.forceFullSnapshot && !request.props.isSavepoint()) {
-            type = CheckpointType.FULL_CHECKPOINT;
+            type = FULL_CHECKPOINT;
         } else {
             type = request.props.getCheckpointType();
         }

@@ -29,7 +29,7 @@ import org.apache.flink.configuration.CheckpointingOptions;
 import org.apache.flink.configuration.ClusterOptions;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.HighAvailabilityOptions;
-import org.apache.flink.core.execution.CheckpointBackupType;
+import org.apache.flink.core.execution.CheckpointType;
 import org.apache.flink.core.execution.SavepointFormatType;
 import org.apache.flink.metrics.MetricGroup;
 import org.apache.flink.runtime.blob.BlobServer;
@@ -908,10 +908,10 @@ public abstract class Dispatcher extends FencedRpcEndpoint<DispatcherId>
     @Override
     public CompletableFuture<Acknowledge> triggerCheckpoint(
             AsynchronousJobOperationKey operationKey,
-            CheckpointBackupType checkpointBackupType,
+            CheckpointType checkpointType,
             Time timeout) {
         return dispatcherCachedOperationsHandler.triggerCheckpoint(
-                operationKey, checkpointBackupType, timeout);
+                operationKey, checkpointType, timeout);
     }
 
     @Override
@@ -922,12 +922,12 @@ public abstract class Dispatcher extends FencedRpcEndpoint<DispatcherId>
 
     public CompletableFuture<Long> triggerCheckpointAndGetCheckpointID(
             final JobID jobID,
-            final CheckpointBackupType checkpointBackupType,
+            final CheckpointType checkpointType,
             final Time timeout) {
         return performOperationOnJobMasterGateway(
                 jobID,
                 gateway ->
-                        gateway.triggerCheckpoint(checkpointBackupType, timeout)
+                        gateway.triggerCheckpoint(checkpointType, timeout)
                                 .thenApply(CompletedCheckpoint::getCheckpointID));
     }
 

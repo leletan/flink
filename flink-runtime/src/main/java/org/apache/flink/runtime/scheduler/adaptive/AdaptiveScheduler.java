@@ -26,7 +26,7 @@ import org.apache.flink.configuration.JobManagerOptions;
 import org.apache.flink.configuration.MetricOptions;
 import org.apache.flink.configuration.SchedulerExecutionMode;
 import org.apache.flink.configuration.WebOptions;
-import org.apache.flink.core.execution.CheckpointBackupType;
+import org.apache.flink.core.execution.CheckpointType;
 import org.apache.flink.core.execution.SavepointFormatType;
 import org.apache.flink.queryablestate.KvStateID;
 import org.apache.flink.runtime.JobException;
@@ -626,11 +626,11 @@ public class AdaptiveScheduler
 
     @Override
     public CompletableFuture<CompletedCheckpoint> triggerCheckpoint(
-            @Nullable CheckpointBackupType checkpointBackupType) {
+            @Nullable CheckpointType checkpointType) {
         return state.tryCall(
                         StateWithExecutionGraph.class,
                         stateWithExecutionGraph ->
-                                stateWithExecutionGraph.triggerCheckpoint(checkpointBackupType),
+                                stateWithExecutionGraph.triggerCheckpoint(checkpointType),
                         "triggerCheckpoint")
                 .orElse(
                         FutureUtils.completedExceptionally(

@@ -21,7 +21,7 @@ package org.apache.flink.runtime.checkpoint;
 import org.apache.flink.annotation.VisibleForTesting;
 import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.core.execution.CheckpointBackupType;
+import org.apache.flink.core.execution.CheckpointType;
 import org.apache.flink.core.execution.SavepointFormatType;
 import org.apache.flink.runtime.checkpoint.FinishedTaskStateProvider.PartialFinishingNotSupportedByStateException;
 import org.apache.flink.runtime.checkpoint.hooks.MasterHooks;
@@ -515,35 +515,35 @@ public class CheckpointCoordinator {
     }
 
     /**
-     * Triggers one new checkpoint with the given checkpointBackupType. If the given
-     * checkpointBackupType is null, then it will fall back to use the CheckpointCoordinator's
+     * Triggers one new checkpoint with the given checkpointType. If the given
+     * checkpointType is null, then it will fall back to use the CheckpointCoordinator's
      * checkpointProperties. The return value is a future. It completes when the checkpoint
      * triggered finishes or an error occurred.
      *
-     * @param checkpointBackupType specifies the back up type of the checkpoint to trigger.
+     * @param checkpointType specifies the back up type of the checkpoint to trigger.
      * @return a future to the completed checkpoint.
      */
     public CompletableFuture<CompletedCheckpoint> triggerCheckpoint(
-            @Nullable CheckpointBackupType checkpointBackupType) {
+            @Nullable CheckpointType checkpointType) {
 
-        if (checkpointBackupType == null) {
+        if (checkpointType == null) {
             return triggerCheckpointFromCheckpointThread(checkpointProperties, null, false);
         }
 
-        final SnapshotType checkpointType;
-        if (checkpointBackupType == CheckpointBackupType.FULL) {
-            checkpointType = FULL_CHECKPOINT;
-        } else if (checkpointBackupType == CheckpointBackupType.INCREMENTAL) {
-            checkpointType = CHECKPOINT;
+        final SnapshotType snapshotType;
+        if (checkpointType == CheckpointType.FULL) {
+            snapshotType = FULL_CHECKPOINT;
+        } else if (checkpointType == CheckpointType.INCREMENTAL) {
+            snapshotType = CHECKPOINT;
         } else {
             throw new IllegalArgumentException(
-                    "unknown checkpointBackupType: " + checkpointBackupType);
+                    "unknown checkpointType: " + checkpointType);
         }
 
         CheckpointProperties properties =
                 new CheckpointProperties(
                         checkpointProperties.forceCheckpoint(),
-                        checkpointType,
+                        snapshotType,
                         checkpointProperties.discardOnSubsumed(),
                         checkpointProperties.discardOnJobFinished(),
                         checkpointProperties.discardOnJobCancelled(),

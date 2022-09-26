@@ -22,7 +22,7 @@ import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.common.JobStatus;
 import org.apache.flink.api.common.time.Time;
 import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.core.execution.CheckpointBackupType;
+import org.apache.flink.core.execution.CheckpointType;
 import org.apache.flink.core.execution.SavepointFormatType;
 import org.apache.flink.runtime.clusterframework.types.ResourceID;
 import org.apache.flink.runtime.dispatcher.TriggerSavepointMode;
@@ -89,11 +89,11 @@ public class TestingRestfulGateway implements RestfulGateway {
             () -> CompletableFuture.completedFuture(Acknowledge.get());
     static final BiFunction<
                     AsynchronousJobOperationKey,
-                    CheckpointBackupType,
+            CheckpointType,
                     CompletableFuture<Acknowledge>>
             DEFAULT_TRIGGER_CHECKPOINT_FUNCTION =
                     (AsynchronousJobOperationKey operationKey,
-                            CheckpointBackupType checkpointBackupType) ->
+                            CheckpointType checkpointType) ->
                             FutureUtils.completedExceptionally(new UnsupportedOperationException());
     static final Function<AsynchronousJobOperationKey, CompletableFuture<OperationResult<Long>>>
             DEFAULT_GET_CHECKPOINT_STATUS_FUNCTION =
@@ -169,7 +169,7 @@ public class TestingRestfulGateway implements RestfulGateway {
 
     protected BiFunction<
                     AsynchronousJobOperationKey,
-                    CheckpointBackupType,
+            CheckpointType,
                     CompletableFuture<Acknowledge>>
             triggerCheckpointFunction;
 
@@ -241,7 +241,7 @@ public class TestingRestfulGateway implements RestfulGateway {
             Supplier<CompletableFuture<ThreadDumpInfo>> requestThreadDumpSupplier,
             BiFunction<
                             AsynchronousJobOperationKey,
-                            CheckpointBackupType,
+                    CheckpointType,
                             CompletableFuture<Acknowledge>>
                     triggerCheckpointFunction,
             Function<AsynchronousJobOperationKey, CompletableFuture<OperationResult<Long>>>
@@ -351,9 +351,9 @@ public class TestingRestfulGateway implements RestfulGateway {
     @Override
     public CompletableFuture<Acknowledge> triggerCheckpoint(
             AsynchronousJobOperationKey operationKey,
-            CheckpointBackupType checkpointBackupType,
+            CheckpointType checkpointType,
             Time timeout) {
-        return triggerCheckpointFunction.apply(operationKey, checkpointBackupType);
+        return triggerCheckpointFunction.apply(operationKey, checkpointType);
     }
 
     @Override
@@ -434,7 +434,7 @@ public class TestingRestfulGateway implements RestfulGateway {
         protected Supplier<CompletableFuture<Acknowledge>> clusterShutdownSupplier;
         protected BiFunction<
                         AsynchronousJobOperationKey,
-                        CheckpointBackupType,
+                CheckpointType,
                         CompletableFuture<Acknowledge>>
                 triggerCheckpointFunction;
         protected Function<AsynchronousJobOperationKey, CompletableFuture<OperationResult<Long>>>
@@ -561,7 +561,7 @@ public class TestingRestfulGateway implements RestfulGateway {
         public T setTriggerCheckpointFunction(
                 BiFunction<
                                 AsynchronousJobOperationKey,
-                                CheckpointBackupType,
+                        CheckpointType,
                                 CompletableFuture<Acknowledge>>
                         triggerCheckpointFunction) {
             this.triggerCheckpointFunction = triggerCheckpointFunction;

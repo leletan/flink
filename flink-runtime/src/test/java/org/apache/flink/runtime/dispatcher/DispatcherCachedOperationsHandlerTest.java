@@ -23,7 +23,7 @@ import org.apache.flink.api.common.time.Time;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.configuration.RestOptions;
-import org.apache.flink.core.execution.CheckpointBackupType;
+import org.apache.flink.core.execution.CheckpointType;
 import org.apache.flink.core.execution.SavepointFormatType;
 import org.apache.flink.core.testutils.FlinkMatchers;
 import org.apache.flink.runtime.messages.Acknowledge;
@@ -77,7 +77,7 @@ public class DispatcherCachedOperationsHandlerTest extends TestLogger {
                             @Override
                             CompletableFuture<Long> applyWrappedFunction(
                                     JobID jobID,
-                                    CheckpointBackupType checkpointBackupType,
+                                    CheckpointType checkpointType,
                                     Time timeout) {
                                 return checkpointIdFuture;
                             }
@@ -241,19 +241,19 @@ public class DispatcherCachedOperationsHandlerTest extends TestLogger {
     private abstract static class TriggerCheckpointSpyFunction
             implements TriggerCheckpointFunction {
 
-        private final List<Tuple2<JobID, CheckpointBackupType>> invocations = new ArrayList<>();
+        private final List<Tuple2<JobID, CheckpointType>> invocations = new ArrayList<>();
 
         @Override
         public CompletableFuture<Long> apply(
-                JobID jobID, CheckpointBackupType checkpointBackupType, Time timeout) {
-            invocations.add(new Tuple2<>(jobID, checkpointBackupType));
-            return applyWrappedFunction(jobID, checkpointBackupType, timeout);
+                JobID jobID, CheckpointType checkpointType, Time timeout) {
+            invocations.add(new Tuple2<>(jobID, checkpointType));
+            return applyWrappedFunction(jobID, checkpointType, timeout);
         }
 
         abstract CompletableFuture<Long> applyWrappedFunction(
-                JobID jobID, CheckpointBackupType checkpointBackupType, Time timeout);
+                JobID jobID, CheckpointType checkpointType, Time timeout);
 
-        public List<Tuple2<JobID, CheckpointBackupType>> getInvocationParameters() {
+        public List<Tuple2<JobID, CheckpointType>> getInvocationParameters() {
             return invocations;
         }
 
@@ -266,8 +266,8 @@ public class DispatcherCachedOperationsHandlerTest extends TestLogger {
             return new TriggerCheckpointSpyFunction() {
                 @Override
                 CompletableFuture<Long> applyWrappedFunction(
-                        JobID jobID, CheckpointBackupType checkpointBackupType, Time timeout) {
-                    return wrappedFunction.apply(jobID, checkpointBackupType, timeout);
+                        JobID jobID, CheckpointType checkpointType, Time timeout) {
+                    return wrappedFunction.apply(jobID, checkpointType, timeout);
                 }
             };
         }

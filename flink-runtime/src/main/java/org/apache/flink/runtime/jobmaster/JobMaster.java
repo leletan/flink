@@ -24,7 +24,7 @@ import org.apache.flink.api.common.functions.AggregateFunction;
 import org.apache.flink.api.common.time.Time;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.JobManagerOptions;
-import org.apache.flink.core.execution.CheckpointBackupType;
+import org.apache.flink.core.execution.CheckpointType;
 import org.apache.flink.core.execution.SavepointFormatType;
 import org.apache.flink.queryablestate.KvStateID;
 import org.apache.flink.runtime.accumulators.AccumulatorSnapshot;
@@ -857,8 +857,8 @@ public class JobMaster extends FencedRpcEndpoint<JobMasterId>
 
     @Override
     public CompletableFuture<CompletedCheckpoint> triggerCheckpoint(
-            @Nullable final CheckpointBackupType checkpointBackupType, final Time timeout) {
-        return schedulerNG.triggerCheckpoint(checkpointBackupType);
+            @Nullable final CheckpointType checkpointType, final Time timeout) {
+        return schedulerNG.triggerCheckpoint(checkpointType);
     }
 
     @Override

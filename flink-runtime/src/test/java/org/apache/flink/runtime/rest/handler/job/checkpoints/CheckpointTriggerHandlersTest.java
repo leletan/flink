@@ -20,7 +20,7 @@ package org.apache.flink.runtime.rest.handler.job.checkpoints;
 
 import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.common.time.Time;
-import org.apache.flink.core.execution.CheckpointBackupType;
+import org.apache.flink.core.execution.CheckpointType;
 import org.apache.flink.runtime.dispatcher.UnknownOperationKeyException;
 import org.apache.flink.runtime.messages.Acknowledge;
 import org.apache.flink.runtime.rest.RestMatchers;
@@ -94,7 +94,7 @@ public class CheckpointTriggerHandlersTest extends TestLogger {
     public void testCheckpointTriggerCompletedSuccessfully() throws Exception {
         final OperationResult<Long> successfulResult =
                 OperationResult.success(COMPLETED_CHECKPOINT_ID);
-        final CompletableFuture<CheckpointBackupType> checkpointPropertiesFuture =
+        final CompletableFuture<CheckpointType> checkpointPropertiesFuture =
                 new CompletableFuture<>();
 
         final AtomicReference<AsynchronousJobOperationKey> keyReference = new AtomicReference<>();
@@ -102,9 +102,9 @@ public class CheckpointTriggerHandlersTest extends TestLogger {
                 new TestingRestfulGateway.Builder()
                         .setTriggerCheckpointFunction(
                                 (AsynchronousJobOperationKey key,
-                                        CheckpointBackupType checkpointBackupType) -> {
+                                        CheckpointType checkpointType) -> {
                                     keyReference.set(key);
-                                    checkpointPropertiesFuture.complete(checkpointBackupType);
+                                    checkpointPropertiesFuture.complete(checkpointType);
                                     return CompletableFuture.completedFuture(Acknowledge.get());
                                 })
                         .setGetCheckpointStatusFunction(
@@ -120,12 +120,12 @@ public class CheckpointTriggerHandlersTest extends TestLogger {
                                 })
                         .build();
 
-        final CheckpointBackupType checkpointBackupType = CheckpointBackupType.FULL;
+        final CheckpointType checkpointType = CheckpointType.FULL;
 
         final TriggerId triggerId =
                 checkpointTriggerHandler
                         .handleRequest(
-                                triggerCheckpointRequest(checkpointBackupType, null),
+                                triggerCheckpointRequest(checkpointType, null),
                                 testingRestfulGateway)
                         .get()
                         .getTriggerId();
@@ -144,14 +144,14 @@ public class CheckpointTriggerHandlersTest extends TestLogger {
         assertThat(
                 checkpointTriggerResponseBody.resource().getCheckpointId(),
                 equalTo(COMPLETED_CHECKPOINT_ID));
-        assertThat(checkpointPropertiesFuture.get(), Matchers.equalTo(CheckpointBackupType.FULL));
+        assertThat(checkpointPropertiesFuture.get(), Matchers.equalTo(CheckpointType.FULL));
     }
 
     @Test
     public void testTriggerCheckpointNoRetentionPolicy() throws Exception {
         final OperationResult<Long> successfulResult =
                 OperationResult.success(COMPLETED_CHECKPOINT_ID);
-        final CompletableFuture<CheckpointBackupType> checkpointBackupTypeFuture =
+        final CompletableFuture<CheckpointType> checkpointTypeFuture =
                 new CompletableFuture<>();
 
         final AtomicReference<AsynchronousJobOperationKey> keyReference = new AtomicReference<>();
@@ -159,9 +159,9 @@ public class CheckpointTriggerHandlersTest extends TestLogger {
                 new TestingRestfulGateway.Builder()
                         .setTriggerCheckpointFunction(
                                 (AsynchronousJobOperationKey key,
-                                        CheckpointBackupType checkpointBackupType) -> {
+                                        CheckpointType checkpointType) -> {
                                     keyReference.set(key);
-                                    checkpointBackupTypeFuture.complete(checkpointBackupType);
+                                    checkpointTypeFuture.complete(checkpointType);
                                     return CompletableFuture.completedFuture(Acknowledge.get());
                                 })
                         .setGetCheckpointStatusFunction(
@@ -197,7 +197,7 @@ public class CheckpointTriggerHandlersTest extends TestLogger {
         assertThat(
                 checkpointTriggerResponseBody.resource().getCheckpointId(),
                 equalTo(COMPLETED_CHECKPOINT_ID));
-        assertThat(checkpointBackupTypeFuture.get(), equalTo(CheckpointBackupType.DEFAULT));
+        assertThat(checkpointTypeFuture.get(), equalTo(CheckpointType.DEFAULT));
     }
 
     @Test
@@ -210,7 +210,7 @@ public class CheckpointTriggerHandlersTest extends TestLogger {
                 new TestingRestfulGateway.Builder()
                         .setTriggerCheckpointFunction(
                                 (AsynchronousJobOperationKey key,
-                                        CheckpointBackupType checkpointBackupType) -> {
+                                        CheckpointType checkpointType) -> {
                                     keyReference.set(key);
                                     return CompletableFuture.completedFuture(Acknowledge.get());
                                 })
@@ -264,7 +264,7 @@ public class CheckpointTriggerHandlersTest extends TestLogger {
                 new TestingRestfulGateway.Builder()
                         .setTriggerCheckpointFunction(
                                 (AsynchronousJobOperationKey key,
-                                        CheckpointBackupType checkpointBackupType) -> {
+                                        CheckpointType checkpointType) -> {
                                     keyReference.set(key);
                                     return CompletableFuture.completedFuture(Acknowledge.get());
                                 })
@@ -287,7 +287,7 @@ public class CheckpointTriggerHandlersTest extends TestLogger {
                 checkpointTriggerHandler
                         .handleRequest(
                                 triggerCheckpointRequest(
-                                        CheckpointBackupType.FULL, providedTriggerId),
+                                        CheckpointType.FULL, providedTriggerId),
                                 testingRestfulGateway)
                         .get()
                         .getTriggerId();
@@ -331,10 +331,10 @@ public class CheckpointTriggerHandlersTest extends TestLogger {
     }
 
     private static HandlerRequest<CheckpointTriggerRequestBody> triggerCheckpointRequest(
-            final CheckpointBackupType checkpointBackupType, final TriggerId triggerId)
+            final CheckpointType checkpointType, final TriggerId triggerId)
             throws HandlerRequestException {
         return HandlerRequest.resolveParametersAndCreate(
-                new CheckpointTriggerRequestBody(checkpointBackupType, triggerId),
+                new CheckpointTriggerRequestBody(checkpointType, triggerId),
                 new CheckpointTriggerMessageParameters(),
                 Collections.singletonMap(JobIDPathParameter.KEY, JOB_ID.toString()),
                 Collections.emptyMap(),

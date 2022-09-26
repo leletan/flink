@@ -24,7 +24,7 @@ import org.apache.flink.api.common.time.Time;
 import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.api.java.tuple.Tuple5;
 import org.apache.flink.api.java.tuple.Tuple6;
-import org.apache.flink.core.execution.CheckpointBackupType;
+import org.apache.flink.core.execution.CheckpointType;
 import org.apache.flink.core.execution.SavepointFormatType;
 import org.apache.flink.queryablestate.KvStateID;
 import org.apache.flink.runtime.blocklist.BlockedNode;
@@ -136,7 +136,7 @@ public class TestingJobMasterGateway implements JobMasterGateway {
             triggerSavepointFunction;
 
     @Nonnull
-    private final Function<CheckpointBackupType, CompletableFuture<CompletedCheckpoint>>
+    private final Function<CheckpointType, CompletableFuture<CompletedCheckpoint>>
             triggerCheckpointFunction;
 
     @Nonnull
@@ -241,7 +241,7 @@ public class TestingJobMasterGateway implements JobMasterGateway {
                     TriFunction<String, Boolean, SavepointFormatType, CompletableFuture<String>>
                             triggerSavepointFunction,
             @Nonnull
-                    Function<CheckpointBackupType, CompletableFuture<CompletedCheckpoint>>
+                    Function<CheckpointType, CompletableFuture<CompletedCheckpoint>>
                             triggerCheckpointFunction,
             @Nonnull
                     TriFunction<String, Boolean, SavepointFormatType, CompletableFuture<String>>
@@ -419,8 +419,8 @@ public class TestingJobMasterGateway implements JobMasterGateway {
 
     @Override
     public CompletableFuture<CompletedCheckpoint> triggerCheckpoint(
-            CheckpointBackupType checkpointBackupType, Time timeout) {
-        return triggerCheckpointFunction.apply(checkpointBackupType);
+            CheckpointType checkpointType, Time timeout) {
+        return triggerCheckpointFunction.apply(checkpointType);
     }
 
     @Override

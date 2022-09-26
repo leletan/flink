@@ -20,6 +20,7 @@ package org.apache.flink.runtime.rest.handler.job.checkpoints;
 
 import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.common.time.Time;
+import org.apache.flink.core.execution.CheckpointType;
 import org.apache.flink.runtime.dispatcher.UnknownOperationKeyException;
 import org.apache.flink.runtime.rest.handler.AbstractRestHandler;
 import org.apache.flink.runtime.rest.handler.HandlerRequest;
@@ -63,15 +64,15 @@ import java.util.concurrent.CompletionException;
  *
  * <p>A checkpoint is triggered by sending an HTTP {@code POST} request to {@code
  * /jobs/:jobid/checkpoints}. The HTTP request may contain a JSON body to specify a customized
- * {@link TriggerId} and a {@link org.apache.flink.core.execution.CheckpointBackupType}, e.g.,
+ * {@link TriggerId} and a {@link CheckpointType}, e.g.,
  *
  * <pre>
- * { "triggerId": "7d273f5a62eb4730b9dea8e833733c1e", "checkpointBackupType": "FULL" }
+ * { "triggerId": "7d273f5a62eb4730b9dea8e833733c1e", "checkpointType": "FULL" }
  * </pre>
  *
- * <p>If the body is omitted, or the field {@code checkpointBackupType} is {@code null}, the default
- * checkpointBackupType as specified by {@link
- * org.apache.flink.core.execution.CheckpointBackupType#FULL} will be used. As written above, the
+ * <p>If the body is omitted, or the field {@code checkpointType} is {@code null}, the default
+ * checkpointType as specified by {@link
+ * CheckpointType#FULL} will be used. As written above, the
  * response will contain a request id, e.g.,
  *
  * <pre>
@@ -142,7 +143,7 @@ public class CheckpointTriggerHandlers {
 
             return gateway.triggerCheckpoint(
                             operationKey,
-                            request.getRequestBody().getCheckpointBackupType(),
+                            request.getRequestBody().getCheckpointType(),
                             RpcUtils.INF_TIMEOUT)
                     .handle(
                             (acknowledge, throwable) -> {

@@ -18,7 +18,7 @@
 
 package org.apache.flink.runtime.rest.messages.checkpoints;
 
-import org.apache.flink.core.execution.CheckpointBackupType;
+import org.apache.flink.core.execution.CheckpointType;
 import org.apache.flink.runtime.rest.messages.RequestBody;
 import org.apache.flink.runtime.rest.messages.TriggerId;
 
@@ -34,23 +34,23 @@ import java.util.Optional;
 public class CheckpointTriggerRequestBody implements RequestBody {
 
     private static final String FIELD_NAME_TRIGGER_ID = "triggerId";
-    private static final String FIELD_NAME_CHECKPOINT_BACKUP_TYPE = "checkpointBackupType";
+    private static final String FIELD_NAME_CHECKPOINT_TYPE = "checkpointType";
 
     @JsonProperty(FIELD_NAME_TRIGGER_ID)
     @Nullable
     private final TriggerId triggerId;
 
-    @JsonProperty(FIELD_NAME_CHECKPOINT_BACKUP_TYPE)
-    private final CheckpointBackupType checkpointBackupType;
+    @JsonProperty(FIELD_NAME_CHECKPOINT_TYPE)
+    private final CheckpointType checkpointType;
 
     @JsonCreator
     public CheckpointTriggerRequestBody(
-            @Nullable @JsonProperty(FIELD_NAME_CHECKPOINT_BACKUP_TYPE)
-                    final CheckpointBackupType checkpointBackupType,
+            @Nullable @JsonProperty(FIELD_NAME_CHECKPOINT_TYPE)
+                    final CheckpointType checkpointType,
             @Nullable @JsonProperty(FIELD_NAME_TRIGGER_ID) TriggerId triggerId) {
         this.triggerId = triggerId;
-        this.checkpointBackupType =
-                checkpointBackupType != null ? checkpointBackupType : CheckpointBackupType.FULL;
+        this.checkpointType =
+                checkpointType != null ? checkpointType : CheckpointType.FULL;
     }
 
     @JsonIgnore
@@ -59,7 +59,7 @@ public class CheckpointTriggerRequestBody implements RequestBody {
     }
 
     @JsonIgnore
-    public CheckpointBackupType getCheckpointBackupType() {
-        return checkpointBackupType;
+    public CheckpointType getCheckpointType() {
+        return checkpointType;
     }
 }

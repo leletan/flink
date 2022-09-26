@@ -129,10 +129,7 @@ public final class TestingDispatcherGateway extends TestingRestfulGateway
             Supplier<CompletableFuture<Collection<Tuple2<ResourceID, String>>>>
                     requestTaskManagerMetricQueryServiceGatewaysSupplier,
             Supplier<CompletableFuture<ThreadDumpInfo>> requestThreadDumpSupplier,
-            BiFunction<
-                            AsynchronousJobOperationKey,
-                    CheckpointType,
-                            CompletableFuture<Acknowledge>>
+            BiFunction<AsynchronousJobOperationKey, CheckpointType, CompletableFuture<Acknowledge>>
                     triggerCheckpointFunction,
             Function<AsynchronousJobOperationKey, CompletableFuture<OperationResult<Long>>>
                     getCheckpointStatusFunction,

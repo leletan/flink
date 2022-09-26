@@ -151,8 +151,7 @@ public class CheckpointTriggerHandlersTest extends TestLogger {
     public void testTriggerCheckpointNoRetentionPolicy() throws Exception {
         final OperationResult<Long> successfulResult =
                 OperationResult.success(COMPLETED_CHECKPOINT_ID);
-        final CompletableFuture<CheckpointType> checkpointTypeFuture =
-                new CompletableFuture<>();
+        final CompletableFuture<CheckpointType> checkpointTypeFuture = new CompletableFuture<>();
 
         final AtomicReference<AsynchronousJobOperationKey> keyReference = new AtomicReference<>();
         final TestingRestfulGateway testingRestfulGateway =
@@ -286,8 +285,7 @@ public class CheckpointTriggerHandlersTest extends TestLogger {
         final TriggerId returnedTriggerId =
                 checkpointTriggerHandler
                         .handleRequest(
-                                triggerCheckpointRequest(
-                                        CheckpointType.FULL, providedTriggerId),
+                                triggerCheckpointRequest(CheckpointType.FULL, providedTriggerId),
                                 testingRestfulGateway)
                         .get()
                         .getTriggerId();

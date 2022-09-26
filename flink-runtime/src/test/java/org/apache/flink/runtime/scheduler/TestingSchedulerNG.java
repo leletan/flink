@@ -186,8 +186,7 @@ public class TestingSchedulerNG implements SchedulerNG {
     }
 
     @Override
-    public CompletableFuture<CompletedCheckpoint> triggerCheckpoint(
-            CheckpointType checkpointType) {
+    public CompletableFuture<CompletedCheckpoint> triggerCheckpoint(CheckpointType checkpointType) {
         return triggerCheckpointFunction.apply(checkpointType);
     }
 

@@ -76,9 +76,7 @@ public class DispatcherCachedOperationsHandler {
     }
 
     public CompletableFuture<Acknowledge> triggerCheckpoint(
-            AsynchronousJobOperationKey operationKey,
-            CheckpointType checkpointType,
-            Time timeout) {
+            AsynchronousJobOperationKey operationKey, CheckpointType checkpointType, Time timeout) {
 
         if (!checkpointTriggerCache.containsOperation(operationKey)) {
             checkpointTriggerCache.registerOngoingOperation(

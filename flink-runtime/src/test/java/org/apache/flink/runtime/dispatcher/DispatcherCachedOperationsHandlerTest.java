@@ -76,9 +76,7 @@ public class DispatcherCachedOperationsHandlerTest extends TestLogger {
                         new TriggerCheckpointSpyFunction() {
                             @Override
                             CompletableFuture<Long> applyWrappedFunction(
-                                    JobID jobID,
-                                    CheckpointType checkpointType,
-                                    Time timeout) {
+                                    JobID jobID, CheckpointType checkpointType, Time timeout) {
                                 return checkpointIdFuture;
                             }
                         });

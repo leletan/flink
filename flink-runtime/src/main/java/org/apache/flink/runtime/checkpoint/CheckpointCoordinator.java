@@ -515,10 +515,10 @@ public class CheckpointCoordinator {
     }
 
     /**
-     * Triggers one new checkpoint with the given checkpointType. If the given
-     * checkpointType is null, then it will fall back to use the CheckpointCoordinator's
-     * checkpointProperties. The return value is a future. It completes when the checkpoint
-     * triggered finishes or an error occurred.
+     * Triggers one new checkpoint with the given checkpointType. If the given checkpointType is
+     * null, then it will fall back to use the CheckpointCoordinator's checkpointProperties. The
+     * return value is a future. It completes when the checkpoint triggered finishes or an error
+     * occurred.
      *
      * @param checkpointType specifies the back up type of the checkpoint to trigger.
      * @return a future to the completed checkpoint.
@@ -526,18 +526,15 @@ public class CheckpointCoordinator {
     public CompletableFuture<CompletedCheckpoint> triggerCheckpoint(
             @Nullable CheckpointType checkpointType) {
 
-        if (checkpointType == null) {
-            return triggerCheckpointFromCheckpointThread(checkpointProperties, null, false);
-        }
-
         final SnapshotType snapshotType;
-        if (checkpointType == CheckpointType.FULL) {
+        if (checkpointType == null) {
+            snapshotType = checkpointProperties.getCheckpointType();
+        } else if (checkpointType == CheckpointType.FULL) {
             snapshotType = FULL_CHECKPOINT;
         } else if (checkpointType == CheckpointType.INCREMENTAL) {
             snapshotType = CHECKPOINT;
         } else {
-            throw new IllegalArgumentException(
-                    "unknown checkpointType: " + checkpointType);
+            throw new IllegalArgumentException("unknown checkpointType: " + checkpointType);
         }
 
         CheckpointProperties properties =

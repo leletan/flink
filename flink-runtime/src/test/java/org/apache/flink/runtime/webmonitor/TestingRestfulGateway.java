@@ -88,12 +88,9 @@ public class TestingRestfulGateway implements RestfulGateway {
     static final Supplier<CompletableFuture<Acknowledge>> DEFAULT_CLUSTER_SHUTDOWN_SUPPLIER =
             () -> CompletableFuture.completedFuture(Acknowledge.get());
     static final BiFunction<
-                    AsynchronousJobOperationKey,
-            CheckpointType,
-                    CompletableFuture<Acknowledge>>
+                    AsynchronousJobOperationKey, CheckpointType, CompletableFuture<Acknowledge>>
             DEFAULT_TRIGGER_CHECKPOINT_FUNCTION =
-                    (AsynchronousJobOperationKey operationKey,
-                            CheckpointType checkpointType) ->
+                    (AsynchronousJobOperationKey operationKey, CheckpointType checkpointType) ->
                             FutureUtils.completedExceptionally(new UnsupportedOperationException());
     static final Function<AsynchronousJobOperationKey, CompletableFuture<OperationResult<Long>>>
             DEFAULT_GET_CHECKPOINT_STATUS_FUNCTION =
@@ -168,9 +165,7 @@ public class TestingRestfulGateway implements RestfulGateway {
     protected Supplier<CompletableFuture<ThreadDumpInfo>> requestThreadDumpSupplier;
 
     protected BiFunction<
-                    AsynchronousJobOperationKey,
-            CheckpointType,
-                    CompletableFuture<Acknowledge>>
+                    AsynchronousJobOperationKey, CheckpointType, CompletableFuture<Acknowledge>>
             triggerCheckpointFunction;
 
     protected Function<AsynchronousJobOperationKey, CompletableFuture<OperationResult<Long>>>
@@ -239,10 +234,7 @@ public class TestingRestfulGateway implements RestfulGateway {
             Supplier<CompletableFuture<Collection<Tuple2<ResourceID, String>>>>
                     requestTaskManagerMetricQueryServiceAddressesSupplier,
             Supplier<CompletableFuture<ThreadDumpInfo>> requestThreadDumpSupplier,
-            BiFunction<
-                            AsynchronousJobOperationKey,
-                    CheckpointType,
-                            CompletableFuture<Acknowledge>>
+            BiFunction<AsynchronousJobOperationKey, CheckpointType, CompletableFuture<Acknowledge>>
                     triggerCheckpointFunction,
             Function<AsynchronousJobOperationKey, CompletableFuture<OperationResult<Long>>>
                     getCheckpointStatusFunction,
@@ -350,9 +342,7 @@ public class TestingRestfulGateway implements RestfulGateway {
 
     @Override
     public CompletableFuture<Acknowledge> triggerCheckpoint(
-            AsynchronousJobOperationKey operationKey,
-            CheckpointType checkpointType,
-            Time timeout) {
+            AsynchronousJobOperationKey operationKey, CheckpointType checkpointType, Time timeout) {
         return triggerCheckpointFunction.apply(operationKey, checkpointType);
     }
 
@@ -433,9 +423,7 @@ public class TestingRestfulGateway implements RestfulGateway {
         protected Supplier<CompletableFuture<ThreadDumpInfo>> requestThreadDumpSupplier;
         protected Supplier<CompletableFuture<Acknowledge>> clusterShutdownSupplier;
         protected BiFunction<
-                        AsynchronousJobOperationKey,
-                CheckpointType,
-                        CompletableFuture<Acknowledge>>
+                        AsynchronousJobOperationKey, CheckpointType, CompletableFuture<Acknowledge>>
                 triggerCheckpointFunction;
         protected Function<AsynchronousJobOperationKey, CompletableFuture<OperationResult<Long>>>
                 getCheckpointStatusFunction;
@@ -561,7 +549,7 @@ public class TestingRestfulGateway implements RestfulGateway {
         public T setTriggerCheckpointFunction(
                 BiFunction<
                                 AsynchronousJobOperationKey,
-                        CheckpointType,
+                                CheckpointType,
                                 CompletableFuture<Acknowledge>>
                         triggerCheckpointFunction) {
             this.triggerCheckpointFunction = triggerCheckpointFunction;

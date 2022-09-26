@@ -45,12 +45,10 @@ public class CheckpointTriggerRequestBody implements RequestBody {
 
     @JsonCreator
     public CheckpointTriggerRequestBody(
-            @Nullable @JsonProperty(FIELD_NAME_CHECKPOINT_TYPE)
-                    final CheckpointType checkpointType,
+            @Nullable @JsonProperty(FIELD_NAME_CHECKPOINT_TYPE) final CheckpointType checkpointType,
             @Nullable @JsonProperty(FIELD_NAME_TRIGGER_ID) TriggerId triggerId) {
         this.triggerId = triggerId;
-        this.checkpointType =
-                checkpointType != null ? checkpointType : CheckpointType.FULL;
+        this.checkpointType = checkpointType != null ? checkpointType : CheckpointType.FULL;
     }
 
     @JsonIgnore

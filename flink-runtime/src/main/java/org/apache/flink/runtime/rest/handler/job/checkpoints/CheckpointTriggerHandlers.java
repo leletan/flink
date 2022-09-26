@@ -59,8 +59,8 @@ import java.util.concurrent.CompletionException;
  * <p>Drawing checkpoints is a potentially long-running operation. To avoid blocking HTTP
  * connections, checkpoints must be drawn in two steps. First, an HTTP request is issued to trigger
  * the checkpoint asynchronously. The request will be assigned a {@link TriggerId}, which is
- * returned in the response body. Next, the returned id should be used to poll the status of the
- * checkpoint until it is finished.
+ * returned in the response body. Next, the returned {@link TriggerId} should be used to poll the
+ * status of the checkpoint until it is finished.
  *
  * <p>A checkpoint is triggered by sending an HTTP {@code POST} request to {@code
  * /jobs/:jobid/checkpoints}. The HTTP request may contain a JSON body to specify a customized
@@ -71,8 +71,7 @@ import java.util.concurrent.CompletionException;
  * </pre>
  *
  * <p>If the body is omitted, or the field {@code checkpointType} is {@code null}, the default
- * checkpointType as specified by {@link
- * CheckpointType#FULL} will be used. As written above, the
+ * checkpointType as specified by {@link CheckpointType#FULL} will be used. As written above, the
  * response will contain a request id, e.g.,
  *
  * <pre>

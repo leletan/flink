@@ -223,14 +223,13 @@ public interface JobMasterGateway
     /**
      * Triggers taking a checkpoint of the executed job.
      *
-     * @param checkpointType to determine how checkpoint should be taken or null if the
-     *     existing checkpoint property should be used
+     * @param checkpointType to determine how checkpoint should be taken or null if the existing
+     *     checkpoint property should be used
      * @param timeout for the rpc call
      * @return Future which is completed with the CompletedCheckpoint once completed
      */
     CompletableFuture<CompletedCheckpoint> triggerCheckpoint(
-            @Nullable final CheckpointType checkpointType,
-            @RpcTimeout final Time timeout);
+            @Nullable final CheckpointType checkpointType, @RpcTimeout final Time timeout);
 
     /**
      * Triggers taking a checkpoint of the executed job.

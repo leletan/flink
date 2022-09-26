@@ -30,6 +30,5 @@ import java.util.concurrent.CompletableFuture;
  */
 @FunctionalInterface
 public interface TriggerCheckpointFunction {
-    CompletableFuture<Long> apply(
-            JobID jobId, CheckpointType checkpointType, Time timeout);
+    CompletableFuture<Long> apply(JobID jobId, CheckpointType checkpointType, Time timeout);
 }

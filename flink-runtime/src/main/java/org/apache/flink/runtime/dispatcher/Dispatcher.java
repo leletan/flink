@@ -907,9 +907,7 @@ public abstract class Dispatcher extends FencedRpcEndpoint<DispatcherId>
 
     @Override
     public CompletableFuture<Acknowledge> triggerCheckpoint(
-            AsynchronousJobOperationKey operationKey,
-            CheckpointType checkpointType,
-            Time timeout) {
+            AsynchronousJobOperationKey operationKey, CheckpointType checkpointType, Time timeout) {
         return dispatcherCachedOperationsHandler.triggerCheckpoint(
                 operationKey, checkpointType, timeout);
     }
@@ -921,9 +919,7 @@ public abstract class Dispatcher extends FencedRpcEndpoint<DispatcherId>
     }
 
     public CompletableFuture<Long> triggerCheckpointAndGetCheckpointID(
-            final JobID jobID,
-            final CheckpointType checkpointType,
-            final Time timeout) {
+            final JobID jobID, final CheckpointType checkpointType, final Time timeout) {
         return performOperationOnJobMasterGateway(
                 jobID,
                 gateway ->

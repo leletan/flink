@@ -32,8 +32,8 @@ public enum CheckpointType implements DescribedEnum {
     FULL("A checkpoint type with the entire state check pointed, common for all state backends."),
 
     /**
-     * A checkpoint type that check points only the difference between snapshots, specific for certain state
-     * backend.
+     * A checkpoint type that check points only the difference between snapshots, specific for
+     * certain state backend.
      */
     INCREMENTAL(
             "A checkpoint type that check points only the difference between snapshots, specific for certain state backend.");

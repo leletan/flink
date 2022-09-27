@@ -352,7 +352,7 @@ public class CheckpointCoordinatorTriggeringTest extends TestLogger {
         checkpointCoordinator.startCheckpointScheduler();
         gateway.resetCount();
 
-        // trigger an incremental type checkpoint
+        // trigger an full type checkpoint
         final CompletableFuture<CompletedCheckpoint> checkpoint =
                 checkpointCoordinator.triggerCheckpoint(
                         org.apache.flink.core.execution.CheckpointType.FULL);
@@ -404,7 +404,7 @@ public class CheckpointCoordinatorTriggeringTest extends TestLogger {
         takeSavepoint(graph, attemptID, checkpointCoordinator, 2);
         checkpointCoordinator.startCheckpointScheduler();
         gateway.resetCount();
-        // the checkpoint should be a FULL_CHECKPOINT
+        // the checkpoint should be a FULL_CHECKPOINT even it is specified as incremental
         final CompletableFuture<CompletedCheckpoint> checkpoint =
                 checkpointCoordinator.triggerCheckpoint(
                         org.apache.flink.core.execution.CheckpointType.INCREMENTAL);

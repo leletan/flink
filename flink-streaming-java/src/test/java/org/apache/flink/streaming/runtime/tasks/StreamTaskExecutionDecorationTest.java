@@ -21,7 +21,7 @@ import org.apache.flink.runtime.checkpoint.CheckpointException;
 import org.apache.flink.runtime.checkpoint.CheckpointFailureReason;
 import org.apache.flink.runtime.checkpoint.CheckpointMetaData;
 import org.apache.flink.runtime.checkpoint.CheckpointOptions;
-import org.apache.flink.runtime.checkpoint.CheckpointType;
+import org.apache.flink.runtime.checkpoint.CheckpointSnapshotType;
 import org.apache.flink.runtime.io.network.api.writer.NonRecordWriter;
 import org.apache.flink.runtime.operators.testutils.DummyEnvironment;
 import org.apache.flink.runtime.state.CheckpointStorageLocationReference;
@@ -63,7 +63,7 @@ public class StreamTaskExecutionDecorationTest {
         task.triggerCheckpointOnBarrier(
                 new CheckpointMetaData(1, 2),
                 new CheckpointOptions(
-                        CheckpointType.CHECKPOINT,
+                        CheckpointSnapshotType.CHECKPOINT,
                         new CheckpointStorageLocationReference(new byte[] {1})),
                 null);
         Assert.assertTrue("execution decorator was not called", decorator.wasCalled());
@@ -74,7 +74,7 @@ public class StreamTaskExecutionDecorationTest {
         task.triggerCheckpointAsync(
                 new CheckpointMetaData(1, 2),
                 new CheckpointOptions(
-                        CheckpointType.CHECKPOINT,
+                        CheckpointSnapshotType.CHECKPOINT,
                         new CheckpointStorageLocationReference(new byte[] {1})));
         Assert.assertTrue("mailbox is empty", mailbox.hasMail());
         Assert.assertFalse("execution decorator was called preliminary", decorator.wasCalled());

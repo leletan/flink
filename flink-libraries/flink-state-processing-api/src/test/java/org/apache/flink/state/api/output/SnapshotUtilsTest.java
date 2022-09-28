@@ -23,7 +23,7 @@ import org.apache.flink.core.execution.SavepointFormatType;
 import org.apache.flink.core.fs.Path;
 import org.apache.flink.metrics.groups.OperatorMetricGroup;
 import org.apache.flink.runtime.checkpoint.CheckpointOptions;
-import org.apache.flink.runtime.checkpoint.SavepointType;
+import org.apache.flink.runtime.checkpoint.SavepointSnapshotType;
 import org.apache.flink.runtime.checkpoint.SnapshotType;
 import org.apache.flink.runtime.jobgraph.OperatorID;
 import org.apache.flink.runtime.state.CheckpointStreamFactory;
@@ -79,7 +79,7 @@ public class SnapshotUtilsTest {
         SnapshotUtils.snapshot(
                 operator, 0, 0L, true, false, new Configuration(), path, savepointFormatType);
 
-        Assert.assertEquals(SavepointType.savepoint(savepointFormatType), actualSnapshotType);
+        Assert.assertEquals(SavepointSnapshotType.savepoint(savepointFormatType), actualSnapshotType);
         Assert.assertEquals(EXPECTED_CALL_OPERATOR_SNAPSHOT, ACTUAL_ORDER_TRACKING);
     }
 

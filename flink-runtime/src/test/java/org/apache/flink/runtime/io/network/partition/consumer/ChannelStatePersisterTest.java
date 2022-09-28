@@ -19,7 +19,7 @@ package org.apache.flink.runtime.io.network.partition.consumer;
 
 import org.apache.flink.runtime.checkpoint.CheckpointException;
 import org.apache.flink.runtime.checkpoint.CheckpointOptions;
-import org.apache.flink.runtime.checkpoint.CheckpointType;
+import org.apache.flink.runtime.checkpoint.CheckpointSnapshotType;
 import org.apache.flink.runtime.checkpoint.channel.ChannelStateWriter;
 import org.apache.flink.runtime.checkpoint.channel.InputChannelInfo;
 import org.apache.flink.runtime.checkpoint.channel.RecordingChannelStateWriter;
@@ -51,7 +51,8 @@ public class ChannelStatePersisterTest {
 
         long checkpointId = 1L;
         channelStateWriter.start(
-                checkpointId, CheckpointOptions.unaligned(CheckpointType.CHECKPOINT, getDefault()));
+                checkpointId,
+                CheckpointOptions.unaligned(CheckpointSnapshotType.CHECKPOINT, getDefault()));
 
         persister.checkForBarrier(barrier(checkpointId));
         persister.startPersisting(checkpointId, Arrays.asList(buildSomeBuffer()));
@@ -118,7 +119,8 @@ public class ChannelStatePersisterTest {
         }
         persister.checkForBarrier(barrier(lateCheckpointId));
         channelStateWriter.start(
-                checkpointId, CheckpointOptions.unaligned(CheckpointType.CHECKPOINT, getDefault()));
+                checkpointId,
+                CheckpointOptions.unaligned(CheckpointSnapshotType.CHECKPOINT, getDefault()));
         persister.startPersisting(checkpointId, Arrays.asList(buildSomeBuffer()));
         persister.maybePersist(buildSomeBuffer());
         persister.checkForBarrier(barrier(checkpointId));

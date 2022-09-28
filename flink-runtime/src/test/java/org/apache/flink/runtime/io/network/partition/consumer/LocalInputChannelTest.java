@@ -19,7 +19,7 @@
 package org.apache.flink.runtime.io.network.partition.consumer;
 
 import org.apache.flink.runtime.checkpoint.CheckpointOptions;
-import org.apache.flink.runtime.checkpoint.CheckpointType;
+import org.apache.flink.runtime.checkpoint.CheckpointSnapshotType;
 import org.apache.flink.runtime.checkpoint.channel.RecordingChannelStateWriter;
 import org.apache.flink.runtime.execution.CancelTaskException;
 import org.apache.flink.runtime.io.disk.NoOpFileChannelManager;
@@ -103,7 +103,7 @@ public class LocalInputChannelTest {
                         1L,
                         0L,
                         CheckpointOptions.alignedWithTimeout(
-                                CheckpointType.CHECKPOINT, getDefault(), 123L));
+                                CheckpointSnapshotType.CHECKPOINT, getDefault(), 123L));
         BufferConsumer barrierHolder = EventSerializer.toBufferConsumer(barrier, false);
         BufferConsumer data = createFilledFinishedBufferConsumer(1);
 
@@ -586,7 +586,7 @@ public class LocalInputChannelTest {
 
         final CheckpointStorageLocationReference location = getDefault();
         CheckpointOptions options =
-                CheckpointOptions.unaligned(CheckpointType.CHECKPOINT, location);
+                CheckpointOptions.unaligned(CheckpointSnapshotType.CHECKPOINT, location);
         stateWriter.start(0, options);
 
         final CheckpointBarrier barrier = new CheckpointBarrier(0, 123L, options);

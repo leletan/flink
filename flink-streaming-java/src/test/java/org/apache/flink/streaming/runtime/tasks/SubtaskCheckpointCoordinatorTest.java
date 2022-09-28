@@ -28,8 +28,8 @@ import org.apache.flink.runtime.checkpoint.CheckpointException;
 import org.apache.flink.runtime.checkpoint.CheckpointMetaData;
 import org.apache.flink.runtime.checkpoint.CheckpointMetricsBuilder;
 import org.apache.flink.runtime.checkpoint.CheckpointOptions;
-import org.apache.flink.runtime.checkpoint.CheckpointType;
-import org.apache.flink.runtime.checkpoint.SavepointType;
+import org.apache.flink.runtime.checkpoint.CheckpointSnapshotType;
+import org.apache.flink.runtime.checkpoint.SavepointSnapshotType;
 import org.apache.flink.runtime.checkpoint.SnapshotType;
 import org.apache.flink.runtime.checkpoint.channel.ChannelStateWriter;
 import org.apache.flink.runtime.checkpoint.channel.ChannelStateWriterImpl;
@@ -81,7 +81,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
-import static org.apache.flink.runtime.checkpoint.CheckpointType.CHECKPOINT;
+import static org.apache.flink.runtime.checkpoint.CheckpointSnapshotType.CHECKPOINT;
 import static org.apache.flink.shaded.guava30.com.google.common.util.concurrent.MoreExecutors.newDirectExecutorService;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -96,7 +96,9 @@ public class SubtaskCheckpointCoordinatorTest {
     public void testInitCheckpoint() throws IOException, CheckpointException {
         assertTrue(initCheckpoint(true, CHECKPOINT));
         assertFalse(initCheckpoint(false, CHECKPOINT));
-        assertFalse(initCheckpoint(false, SavepointType.savepoint(SavepointFormatType.CANONICAL)));
+        assertFalse(
+                initCheckpoint(
+                        false, SavepointSnapshotType.savepoint(SavepointFormatType.CANONICAL)));
     }
 
     private boolean initCheckpoint(boolean unalignedCheckpointEnabled, SnapshotType checkpointType)
@@ -117,7 +119,8 @@ public class SubtaskCheckpointCoordinatorTest {
         coordinator.initInputsCheckpoint(
                 1L,
                 unalignedCheckpointEnabled
-                        ? CheckpointOptions.unaligned(CheckpointType.CHECKPOINT, locationReference)
+                        ? CheckpointOptions.unaligned(
+                                CheckpointSnapshotType.CHECKPOINT, locationReference)
                         : CheckpointOptions.alignedNoTimeout(checkpointType, locationReference));
         return writer.started;
     }
@@ -176,7 +179,7 @@ public class SubtaskCheckpointCoordinatorTest {
             coordinator.checkpointState(
                     new CheckpointMetaData(0, 0),
                     new CheckpointOptions(
-                            SavepointType.savepoint(SavepointFormatType.CANONICAL),
+                            SavepointSnapshotType.savepoint(SavepointFormatType.CANONICAL),
                             CheckpointStorageLocationReference.getDefault()),
                     new CheckpointMetricsBuilder(),
                     operatorChain,
@@ -221,7 +224,7 @@ public class SubtaskCheckpointCoordinatorTest {
 
             CheckpointOptions forcedAlignedOptions =
                     CheckpointOptions.unaligned(
-                                    CheckpointType.CHECKPOINT,
+                                    CheckpointSnapshotType.CHECKPOINT,
                                     CheckpointStorageLocationReference.getDefault())
                             .withUnalignedUnsupported();
             coordinator.checkpointState(
@@ -250,7 +253,7 @@ public class SubtaskCheckpointCoordinatorTest {
             coordinator.checkpointState(
                     new CheckpointMetaData(0, 0),
                     new CheckpointOptions(
-                            SavepointType.savepoint(SavepointFormatType.CANONICAL),
+                            SavepointSnapshotType.savepoint(SavepointFormatType.CANONICAL),
                             CheckpointStorageLocationReference.getDefault()),
                     new CheckpointMetricsBuilder(),
                     new RegularOperatorChain<>(

@@ -234,7 +234,7 @@ public class CheckpointCoordinatorTriggeringTest extends TestLogger {
 
         assertThat(
                 gateway.getOnlyTriggeredCheckpoint(attemptID).checkpointOptions.getCheckpointType(),
-                is(CheckpointType.FULL_CHECKPOINT));
+                is(CheckpointSnapshotType.FULL_CHECKPOINT));
     }
 
     @Test
@@ -284,7 +284,7 @@ public class CheckpointCoordinatorTriggeringTest extends TestLogger {
 
         assertThat(
                 gateway.getOnlyTriggeredCheckpoint(attemptID).checkpointOptions.getCheckpointType(),
-                is(CheckpointType.FULL_CHECKPOINT));
+                is(CheckpointSnapshotType.FULL_CHECKPOINT));
     }
 
     @Test
@@ -324,7 +324,7 @@ public class CheckpointCoordinatorTriggeringTest extends TestLogger {
         checkpoint.get();
         assertThat(
                 gateway.getOnlyTriggeredCheckpoint(attemptID).checkpointOptions.getCheckpointType(),
-                is(CheckpointType.CHECKPOINT));
+                is(CheckpointSnapshotType.CHECKPOINT));
     }
 
     @Test
@@ -364,7 +364,7 @@ public class CheckpointCoordinatorTriggeringTest extends TestLogger {
         checkpoint.get();
         assertThat(
                 gateway.getOnlyTriggeredCheckpoint(attemptID).checkpointOptions.getCheckpointType(),
-                is(CheckpointType.FULL_CHECKPOINT));
+                is(CheckpointSnapshotType.FULL_CHECKPOINT));
     }
 
     @Test
@@ -416,7 +416,7 @@ public class CheckpointCoordinatorTriggeringTest extends TestLogger {
 
         assertThat(
                 gateway.getOnlyTriggeredCheckpoint(attemptID).checkpointOptions.getCheckpointType(),
-                is(CheckpointType.FULL_CHECKPOINT));
+                is(CheckpointSnapshotType.FULL_CHECKPOINT));
     }
 
     private CompletedCheckpoint takeSavepoint(ExecutionGraph graph, ExecutionAttemptID attemptID)

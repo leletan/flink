@@ -24,8 +24,8 @@ import org.apache.flink.core.memory.DataOutputSerializer;
 import org.apache.flink.core.memory.MemorySegment;
 import org.apache.flink.core.memory.MemorySegmentFactory;
 import org.apache.flink.runtime.checkpoint.CheckpointOptions;
-import org.apache.flink.runtime.checkpoint.CheckpointType;
-import org.apache.flink.runtime.checkpoint.SavepointType;
+import org.apache.flink.runtime.checkpoint.CheckpointSnapshotType;
+import org.apache.flink.runtime.checkpoint.SavepointSnapshotType;
 import org.apache.flink.runtime.checkpoint.SnapshotType;
 import org.apache.flink.runtime.event.AbstractEvent;
 import org.apache.flink.runtime.io.network.api.CancelCheckpointMarker;
@@ -240,9 +240,9 @@ public class EventSerializer {
         final SnapshotType snapshotType = checkpointOptions.getCheckpointType();
         if (snapshotType.isSavepoint()) {
             encodeSavepointType(snapshotType, buf);
-        } else if (snapshotType.equals(CheckpointType.CHECKPOINT)) {
+        } else if (snapshotType.equals(CheckpointSnapshotType.CHECKPOINT)) {
             buf.put(CHECKPOINT_TYPE_CHECKPOINT);
-        } else if (snapshotType.equals(CheckpointType.FULL_CHECKPOINT)) {
+        } else if (snapshotType.equals(CheckpointSnapshotType.FULL_CHECKPOINT)) {
             buf.put(CHECKPOINT_TYPE_FULL_CHECKPOINT);
         } else {
             throw new IOException("Unknown checkpoint type: " + snapshotType);
@@ -263,8 +263,8 @@ public class EventSerializer {
 
     private static void encodeSavepointType(SnapshotType snapshotType, ByteBuffer buf)
             throws IOException {
-        SavepointType savepointType = (SavepointType) snapshotType;
-        switch (savepointType.getPostCheckpointAction()) {
+        SavepointSnapshotType savepointSnapshotType = (SavepointSnapshotType) snapshotType;
+        switch (savepointSnapshotType.getPostCheckpointAction()) {
             case NONE:
                 buf.put(CHECKPOINT_TYPE_SAVEPOINT);
                 break;
@@ -277,7 +277,7 @@ public class EventSerializer {
             default:
                 throw new IOException("Unknown savepoint type: " + snapshotType);
         }
-        switch (savepointType.getFormatType()) {
+        switch (savepointSnapshotType.getFormatType()) {
             case CANONICAL:
                 buf.put(SAVEPOINT_FORMAT_CANONICAL);
                 break;
@@ -298,9 +298,9 @@ public class EventSerializer {
 
         final SnapshotType snapshotType;
         if (checkpointTypeCode == CHECKPOINT_TYPE_CHECKPOINT) {
-            snapshotType = CheckpointType.CHECKPOINT;
+            snapshotType = CheckpointSnapshotType.CHECKPOINT;
         } else if (checkpointTypeCode == CHECKPOINT_TYPE_FULL_CHECKPOINT) {
-            snapshotType = CheckpointType.FULL_CHECKPOINT;
+            snapshotType = CheckpointSnapshotType.FULL_CHECKPOINT;
         } else if (checkpointTypeCode == CHECKPOINT_TYPE_SAVEPOINT
                 || checkpointTypeCode == CHECKPOINT_TYPE_SAVEPOINT_SUSPEND
                 || checkpointTypeCode == CHECKPOINT_TYPE_SAVEPOINT_TERMINATE) {
@@ -328,8 +328,8 @@ public class EventSerializer {
                 new CheckpointOptions(snapshotType, locationRef, alignmentType, alignmentTimeout));
     }
 
-    private static SavepointType decodeSavepointType(byte checkpointTypeCode, ByteBuffer buffer)
-            throws IOException {
+    private static SavepointSnapshotType decodeSavepointType(
+            byte checkpointTypeCode, ByteBuffer buffer) throws IOException {
         final byte formatTypeCode = buffer.get();
         final SavepointFormatType formatType;
         if (formatTypeCode == SAVEPOINT_FORMAT_CANONICAL) {
@@ -340,11 +340,11 @@ public class EventSerializer {
             throw new IOException("Unknown savepoint format type code: " + formatTypeCode);
         }
         if (checkpointTypeCode == CHECKPOINT_TYPE_SAVEPOINT) {
-            return SavepointType.savepoint(formatType);
+            return SavepointSnapshotType.savepoint(formatType);
         } else if (checkpointTypeCode == CHECKPOINT_TYPE_SAVEPOINT_SUSPEND) {
-            return SavepointType.suspend(formatType);
+            return SavepointSnapshotType.suspend(formatType);
         } else if (checkpointTypeCode == CHECKPOINT_TYPE_SAVEPOINT_TERMINATE) {
-            return SavepointType.terminate(formatType);
+            return SavepointSnapshotType.terminate(formatType);
         } else {
             throw new IOException("Unknown savepoint type code: " + checkpointTypeCode);
         }

@@ -23,7 +23,7 @@ import org.apache.flink.contrib.streaming.state.RocksDBKeyedStateBackend.RocksDb
 import org.apache.flink.contrib.streaming.state.RocksDBStateUploader;
 import org.apache.flink.core.fs.CloseableRegistry;
 import org.apache.flink.runtime.checkpoint.CheckpointOptions;
-import org.apache.flink.runtime.checkpoint.CheckpointType;
+import org.apache.flink.runtime.checkpoint.CheckpointSnapshotType;
 import org.apache.flink.runtime.checkpoint.SnapshotType;
 import org.apache.flink.runtime.state.CheckpointStreamFactory;
 import org.apache.flink.runtime.state.CheckpointedStateScope;
@@ -150,7 +150,7 @@ public class RocksIncrementalSnapshotStrategy<K>
         }
 
         final PreviousSnapshot previousSnapshot;
-        final CheckpointType.SharingFilesStrategy sharingFilesStrategy =
+        final CheckpointSnapshotType.SharingFilesStrategy sharingFilesStrategy =
                 checkpointOptions.getCheckpointType().getSharingFilesStrategy();
         switch (sharingFilesStrategy) {
             case FORWARD_BACKWARD:

@@ -20,8 +20,8 @@ package org.apache.flink.runtime.io.network.api.serialization;
 
 import org.apache.flink.core.execution.SavepointFormatType;
 import org.apache.flink.runtime.checkpoint.CheckpointOptions;
-import org.apache.flink.runtime.checkpoint.CheckpointType;
-import org.apache.flink.runtime.checkpoint.SavepointType;
+import org.apache.flink.runtime.checkpoint.CheckpointSnapshotType;
+import org.apache.flink.runtime.checkpoint.SavepointSnapshotType;
 import org.apache.flink.runtime.event.AbstractEvent;
 import org.apache.flink.runtime.io.network.api.CancelCheckpointMarker;
 import org.apache.flink.runtime.io.network.api.CheckpointBarrier;
@@ -58,49 +58,49 @@ public class EventSerializerTest {
                 1678L,
                 4623784L,
                 new CheckpointOptions(
-                        CheckpointType.CHECKPOINT,
+                        CheckpointSnapshotType.CHECKPOINT,
                         CheckpointStorageLocationReference.getDefault())),
         new CheckpointBarrier(
                 1678L,
                 4623784L,
                 new CheckpointOptions(
-                        CheckpointType.FULL_CHECKPOINT,
+                        CheckpointSnapshotType.FULL_CHECKPOINT,
                         CheckpointStorageLocationReference.getDefault())),
         new CheckpointBarrier(
                 1678L,
                 4623784L,
                 new CheckpointOptions(
-                        SavepointType.savepoint(SavepointFormatType.CANONICAL),
+                        SavepointSnapshotType.savepoint(SavepointFormatType.CANONICAL),
                         CheckpointStorageLocationReference.getDefault())),
         new CheckpointBarrier(
                 1678L,
                 4623784L,
                 new CheckpointOptions(
-                        SavepointType.suspend(SavepointFormatType.CANONICAL),
+                        SavepointSnapshotType.suspend(SavepointFormatType.CANONICAL),
                         CheckpointStorageLocationReference.getDefault())),
         new CheckpointBarrier(
                 1678L,
                 4623784L,
                 new CheckpointOptions(
-                        SavepointType.terminate(SavepointFormatType.CANONICAL),
+                        SavepointSnapshotType.terminate(SavepointFormatType.CANONICAL),
                         CheckpointStorageLocationReference.getDefault())),
         new CheckpointBarrier(
                 1678L,
                 4623784L,
                 new CheckpointOptions(
-                        SavepointType.savepoint(SavepointFormatType.NATIVE),
+                        SavepointSnapshotType.savepoint(SavepointFormatType.NATIVE),
                         CheckpointStorageLocationReference.getDefault())),
         new CheckpointBarrier(
                 1678L,
                 4623784L,
                 new CheckpointOptions(
-                        SavepointType.suspend(SavepointFormatType.NATIVE),
+                        SavepointSnapshotType.suspend(SavepointFormatType.NATIVE),
                         CheckpointStorageLocationReference.getDefault())),
         new CheckpointBarrier(
                 1678L,
                 4623784L,
                 new CheckpointOptions(
-                        SavepointType.terminate(SavepointFormatType.NATIVE),
+                        SavepointSnapshotType.terminate(SavepointFormatType.NATIVE),
                         CheckpointStorageLocationReference.getDefault())),
         new TestTaskEvent(Math.random(), 12361231273L),
         new CancelCheckpointMarker(287087987329842L),
@@ -109,7 +109,7 @@ public class EventSerializerTest {
                         42L,
                         1337L,
                         CheckpointOptions.alignedWithTimeout(
-                                CheckpointType.CHECKPOINT,
+                                CheckpointSnapshotType.CHECKPOINT,
                                 CheckpointStorageLocationReference.getDefault(),
                                 10)),
                 44),

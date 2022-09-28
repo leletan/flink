@@ -21,7 +21,7 @@ import org.apache.flink.runtime.checkpoint.CheckpointException;
 import org.apache.flink.runtime.checkpoint.CheckpointMetaData;
 import org.apache.flink.runtime.checkpoint.CheckpointMetricsBuilder;
 import org.apache.flink.runtime.checkpoint.CheckpointOptions;
-import org.apache.flink.runtime.checkpoint.CheckpointType;
+import org.apache.flink.runtime.checkpoint.CheckpointSnapshotType;
 import org.apache.flink.runtime.checkpoint.channel.InputChannelInfo;
 import org.apache.flink.runtime.checkpoint.channel.RecordingChannelStateWriter;
 import org.apache.flink.runtime.io.network.NettyShuffleEnvironment;
@@ -902,7 +902,8 @@ public class UnalignedCheckpointsTest {
                 new CheckpointBarrier(
                         checkpointId,
                         timestamp,
-                        CheckpointOptions.unaligned(CheckpointType.CHECKPOINT, getDefault())),
+                        CheckpointOptions.unaligned(
+                                CheckpointSnapshotType.CHECKPOINT, getDefault())),
                 new InputChannelInfo(0, channel));
     }
 
@@ -1059,7 +1060,9 @@ public class UnalignedCheckpointsTest {
 
     private CheckpointBarrier buildCheckpointBarrier(long id) {
         return new CheckpointBarrier(
-                id, 0, CheckpointOptions.unaligned(CheckpointType.CHECKPOINT, getDefault()));
+                id,
+                0,
+                CheckpointOptions.unaligned(CheckpointSnapshotType.CHECKPOINT, getDefault()));
     }
 
     // ------------------------------------------------------------------------

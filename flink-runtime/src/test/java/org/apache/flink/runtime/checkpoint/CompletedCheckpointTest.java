@@ -253,7 +253,14 @@ public class CompletedCheckpointTest {
 
         CheckpointProperties props =
                 new CheckpointProperties(
-                        false, CheckpointType.CHECKPOINT, true, false, false, false, false, false);
+                        false,
+                        CheckpointSnapshotType.CHECKPOINT,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false);
 
         CompletedCheckpoint checkpoint =
                 new CompletedCheckpoint(
@@ -301,7 +308,7 @@ public class CompletedCheckpointTest {
             CheckpointProperties retainProps =
                     new CheckpointProperties(
                             false,
-                            CheckpointType.CHECKPOINT,
+                            CheckpointSnapshotType.CHECKPOINT,
                             false,
                             false,
                             false,
@@ -334,7 +341,14 @@ public class CompletedCheckpointTest {
             // Keep
             CheckpointProperties discardProps =
                     new CheckpointProperties(
-                            false, CheckpointType.CHECKPOINT, true, true, true, true, true, false);
+                            false,
+                            CheckpointSnapshotType.CHECKPOINT,
+                            true,
+                            true,
+                            true,
+                            true,
+                            true,
+                            false);
 
             checkpoint =
                     new CompletedCheckpoint(

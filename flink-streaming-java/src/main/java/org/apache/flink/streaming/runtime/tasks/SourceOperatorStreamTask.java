@@ -24,7 +24,7 @@ import org.apache.flink.api.connector.source.SourceReader;
 import org.apache.flink.metrics.Counter;
 import org.apache.flink.runtime.checkpoint.CheckpointMetaData;
 import org.apache.flink.runtime.checkpoint.CheckpointOptions;
-import org.apache.flink.runtime.checkpoint.SavepointType;
+import org.apache.flink.runtime.checkpoint.SavepointSnapshotType;
 import org.apache.flink.runtime.checkpoint.SnapshotType;
 import org.apache.flink.runtime.execution.Environment;
 import org.apache.flink.runtime.io.network.api.StopMode;
@@ -184,7 +184,8 @@ public class SourceOperatorStreamTask<T> extends StreamTask<T, SourceOperator<T,
     }
 
     private boolean isSynchronous(SnapshotType checkpointType) {
-        return checkpointType.isSavepoint() && ((SavepointType) checkpointType).isSynchronous();
+        return checkpointType.isSavepoint()
+                && ((SavepointSnapshotType) checkpointType).isSynchronous();
     }
 
     private CompletableFuture<Boolean> triggerStopWithSavepointAsync(
@@ -196,7 +197,7 @@ public class SourceOperatorStreamTask<T> extends StreamTask<T, SourceOperator<T,
                     setSynchronousSavepoint(checkpointMetaData.getCheckpointId());
                     FutureUtils.forward(
                             mainOperator.stop(
-                                    ((SavepointType) checkpointOptions.getCheckpointType())
+                                    ((SavepointSnapshotType) checkpointOptions.getCheckpointType())
                                                     .shouldDrain()
                                             ? StopMode.DRAIN
                                             : StopMode.NO_DRAIN),

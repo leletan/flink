@@ -122,7 +122,7 @@ public class PendingCheckpointTest {
         CheckpointProperties forced =
                 new CheckpointProperties(
                         true,
-                        SavepointType.savepoint(SavepointFormatType.CANONICAL),
+                        SavepointSnapshotType.savepoint(SavepointFormatType.CANONICAL),
                         false,
                         false,
                         false,
@@ -143,7 +143,7 @@ public class PendingCheckpointTest {
         CheckpointProperties subsumed =
                 new CheckpointProperties(
                         false,
-                        SavepointType.savepoint(SavepointFormatType.CANONICAL),
+                        SavepointSnapshotType.savepoint(SavepointFormatType.CANONICAL),
                         false,
                         false,
                         false,
@@ -179,7 +179,7 @@ public class PendingCheckpointTest {
         CheckpointProperties props =
                 new CheckpointProperties(
                         false,
-                        SavepointType.savepoint(SavepointFormatType.CANONICAL),
+                        SavepointSnapshotType.savepoint(SavepointFormatType.CANONICAL),
                         false,
                         false,
                         false,
@@ -240,7 +240,14 @@ public class PendingCheckpointTest {
     public void testAbortDiscardsState() throws Exception {
         CheckpointProperties props =
                 new CheckpointProperties(
-                        false, CheckpointType.CHECKPOINT, false, false, false, false, false, false);
+                        false,
+                        CheckpointSnapshotType.CHECKPOINT,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false);
         QueueExecutor executor = new QueueExecutor();
 
         OperatorState state = mock(OperatorState.class);
@@ -330,7 +337,14 @@ public class PendingCheckpointTest {
     public void testSetCanceller() throws Exception {
         final CheckpointProperties props =
                 new CheckpointProperties(
-                        false, CheckpointType.CHECKPOINT, true, true, true, true, true, false);
+                        false,
+                        CheckpointSnapshotType.CHECKPOINT,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false);
 
         PendingCheckpoint aborted = createPendingCheckpoint(props);
         abort(aborted, CheckpointFailureReason.CHECKPOINT_DECLINED);

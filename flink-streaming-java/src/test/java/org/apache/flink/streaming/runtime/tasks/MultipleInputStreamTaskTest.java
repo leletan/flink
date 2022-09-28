@@ -46,8 +46,8 @@ import org.apache.flink.metrics.groups.OperatorMetricGroup;
 import org.apache.flink.runtime.checkpoint.CheckpointMetaData;
 import org.apache.flink.runtime.checkpoint.CheckpointMetrics;
 import org.apache.flink.runtime.checkpoint.CheckpointOptions;
-import org.apache.flink.runtime.checkpoint.CheckpointType;
-import org.apache.flink.runtime.checkpoint.SavepointType;
+import org.apache.flink.runtime.checkpoint.CheckpointSnapshotType;
+import org.apache.flink.runtime.checkpoint.SavepointSnapshotType;
 import org.apache.flink.runtime.checkpoint.TaskStateSnapshot;
 import org.apache.flink.runtime.executiongraph.ExecutionAttemptID;
 import org.apache.flink.runtime.io.network.api.CancelCheckpointMarker;
@@ -926,7 +926,7 @@ public class MultipleInputStreamTaskTest {
     public void testTriggeringAlignedNoTimeoutCheckpointWithFinishedChannels() throws Exception {
         testTriggeringCheckpointWithFinishedChannels(
                 CheckpointOptions.alignedNoTimeout(
-                        CheckpointType.CHECKPOINT,
+                        CheckpointSnapshotType.CHECKPOINT,
                         CheckpointStorageLocationReference.getDefault()));
     }
 
@@ -934,7 +934,7 @@ public class MultipleInputStreamTaskTest {
     public void testTriggeringUnalignedCheckpointWithFinishedChannels() throws Exception {
         testTriggeringCheckpointWithFinishedChannels(
                 CheckpointOptions.unaligned(
-                        CheckpointType.CHECKPOINT,
+                        CheckpointSnapshotType.CHECKPOINT,
                         CheckpointStorageLocationReference.getDefault()));
     }
 
@@ -942,7 +942,7 @@ public class MultipleInputStreamTaskTest {
     public void testTriggeringAlignedWithTimeoutCheckpointWithFinishedChannels() throws Exception {
         testTriggeringCheckpointWithFinishedChannels(
                 CheckpointOptions.alignedWithTimeout(
-                        CheckpointType.CHECKPOINT,
+                        CheckpointSnapshotType.CHECKPOINT,
                         CheckpointStorageLocationReference.getDefault(),
                         10L));
     }
@@ -1108,7 +1108,7 @@ public class MultipleInputStreamTaskTest {
                     testHarness.streamTask.triggerCheckpointAsync(
                             new CheckpointMetaData(2, 2),
                             CheckpointOptions.alignedNoTimeout(
-                                    SavepointType.terminate(SavepointFormatType.CANONICAL),
+                                    SavepointSnapshotType.terminate(SavepointFormatType.CANONICAL),
                                     CheckpointStorageLocationReference.getDefault()));
             checkpointCompleted.whenComplete(
                     (ignored, exception) ->

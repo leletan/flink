@@ -288,6 +288,48 @@ public class CheckpointCoordinatorTriggeringTest extends TestLogger {
     }
 
     @Test
+    public void testTriggeringCheckpointsWithNullCheckpointType() throws Exception {
+        CheckpointCoordinatorTestingUtils.CheckpointRecorderTaskManagerGateway gateway =
+                new CheckpointCoordinatorTestingUtils.CheckpointRecorderTaskManagerGateway();
+
+        JobVertexID jobVertexID = new JobVertexID();
+        ExecutionGraph graph =
+                new CheckpointCoordinatorTestingUtils.CheckpointExecutionGraphBuilder()
+                        .addJobVertex(jobVertexID)
+                        .setTaskManagerGateway(gateway)
+                        .build(EXECUTOR_RESOURCE.getExecutor());
+
+        ExecutionVertex vertex = graph.getJobVertex(jobVertexID).getTaskVertices()[0];
+        ExecutionAttemptID attemptID = vertex.getCurrentExecutionAttempt().getAttemptId();
+
+        final StandaloneCompletedCheckpointStore checkpointStore =
+                new StandaloneCompletedCheckpointStore(1);
+        final StandaloneCheckpointIDCounter checkpointIDCounter =
+                new StandaloneCheckpointIDCounter();
+        // this will create a checkpoint with CHECKPOINT_NEVER_RETAINED CheckpointProperties
+        // this also means the initial SnapshotType is CheckpointSnapshotType.CHECKPOINT
+        CheckpointCoordinator checkpointCoordinator =
+                createCheckpointCoordinator(graph, checkpointStore, checkpointIDCounter);
+
+        checkpointCoordinator.startCheckpointScheduler();
+        gateway.resetCount();
+
+        // trigger an incremental type checkpoint
+        final CompletableFuture<CompletedCheckpoint> checkpoint =
+                checkpointCoordinator.triggerCheckpoint(null);
+
+        manuallyTriggeredScheduledExecutor.triggerAll();
+        checkpointCoordinator.receiveAcknowledgeMessage(
+                new AcknowledgeCheckpoint(graph.getJobID(), attemptID, 1),
+                TASK_MANAGER_LOCATION_INFO);
+        checkpoint.get();
+        // check if the SnapshotType still stays the same when triggerCheckpoint(null)
+        assertThat(
+                gateway.getOnlyTriggeredCheckpoint(attemptID).checkpointOptions.getCheckpointType(),
+                is(CheckpointType.CHECKPOINT));
+    }
+
+    @Test
     public void testTriggeringCheckpointsWithIncrementalCheckpointType() throws Exception {
         CheckpointCoordinatorTestingUtils.CheckpointRecorderTaskManagerGateway gateway =
                 new CheckpointCoordinatorTestingUtils.CheckpointRecorderTaskManagerGateway();

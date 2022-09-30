@@ -24,20 +24,20 @@ import java.util.Objects;
 
 /** The type of checkpoint to perform. */
 @Internal
-public final class CheckpointSnapshotType implements SnapshotType {
+public final class CheckpointType implements SnapshotType {
 
     /** A checkpoint, full or incremental. */
-    public static final CheckpointSnapshotType CHECKPOINT =
-            new CheckpointSnapshotType("Checkpoint", SharingFilesStrategy.FORWARD_BACKWARD);
+    public static final CheckpointType CHECKPOINT =
+            new CheckpointType("Checkpoint", SharingFilesStrategy.FORWARD_BACKWARD);
 
-    public static final CheckpointSnapshotType FULL_CHECKPOINT =
-            new CheckpointSnapshotType("Full Checkpoint", SharingFilesStrategy.FORWARD);
+    public static final CheckpointType FULL_CHECKPOINT =
+            new CheckpointType("Full Checkpoint", SharingFilesStrategy.FORWARD);
 
     private final String name;
 
     private final SharingFilesStrategy sharingFilesStrategy;
 
-    private CheckpointSnapshotType(final String name, SharingFilesStrategy sharingFilesStrategy) {
+    private CheckpointType(final String name, SharingFilesStrategy sharingFilesStrategy) {
         this.name = name;
         this.sharingFilesStrategy = sharingFilesStrategy;
     }
@@ -62,7 +62,7 @@ public final class CheckpointSnapshotType implements SnapshotType {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        CheckpointSnapshotType type = (CheckpointSnapshotType) o;
+        CheckpointType type = (CheckpointType) o;
         return name.equals(type.name) && sharingFilesStrategy == type.sharingFilesStrategy;
     }
 

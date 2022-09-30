@@ -38,8 +38,8 @@ import org.apache.flink.core.io.InputStatus;
 import org.apache.flink.runtime.checkpoint.CheckpointMetaData;
 import org.apache.flink.runtime.checkpoint.CheckpointMetrics;
 import org.apache.flink.runtime.checkpoint.CheckpointOptions;
-import org.apache.flink.runtime.checkpoint.CheckpointSnapshotType;
-import org.apache.flink.runtime.checkpoint.SavepointSnapshotType;
+import org.apache.flink.runtime.checkpoint.CheckpointType;
+import org.apache.flink.runtime.checkpoint.SavepointType;
 import org.apache.flink.runtime.checkpoint.TaskStateSnapshot;
 import org.apache.flink.runtime.executiongraph.ExecutionAttemptID;
 import org.apache.flink.runtime.io.network.api.CheckpointBarrier;
@@ -128,7 +128,7 @@ class SourceOperatorStreamTaskTest extends SourceStreamTaskTestBase {
 
             final CheckpointOptions checkpointOptions =
                     new CheckpointOptions(
-                            SavepointSnapshotType.terminate(SavepointFormatType.CANONICAL),
+                            SavepointType.terminate(SavepointFormatType.CANONICAL),
                             CheckpointStorageLocationReference.getDefault());
             triggerCheckpointWaitForFinish(testHarness, checkpointId, checkpointOptions);
 
@@ -168,22 +168,21 @@ class SourceOperatorStreamTaskTest extends SourceStreamTaskTestBase {
     static Stream<?> provideExternallyInducedParameters() {
         return Stream.of(
                         CheckpointOptions.alignedNoTimeout(
-                                SavepointSnapshotType.savepoint(SavepointFormatType.CANONICAL),
+                                SavepointType.savepoint(SavepointFormatType.CANONICAL),
                                 SAVEPOINT_LOCATION),
                         CheckpointOptions.alignedNoTimeout(
-                                SavepointSnapshotType.terminate(SavepointFormatType.CANONICAL),
+                                SavepointType.terminate(SavepointFormatType.CANONICAL),
                                 SAVEPOINT_LOCATION),
                         CheckpointOptions.alignedNoTimeout(
-                                SavepointSnapshotType.suspend(SavepointFormatType.CANONICAL),
+                                SavepointType.suspend(SavepointFormatType.CANONICAL),
                                 SAVEPOINT_LOCATION),
                         CheckpointOptions.alignedNoTimeout(
-                                CheckpointSnapshotType.CHECKPOINT, CHECKPOINT_LOCATION),
+                                CheckpointType.CHECKPOINT, CHECKPOINT_LOCATION),
                         CheckpointOptions.alignedWithTimeout(
-                                CheckpointSnapshotType.CHECKPOINT, CHECKPOINT_LOCATION, 123L),
-                        CheckpointOptions.unaligned(
-                                CheckpointSnapshotType.CHECKPOINT, CHECKPOINT_LOCATION),
+                                CheckpointType.CHECKPOINT, CHECKPOINT_LOCATION, 123L),
+                        CheckpointOptions.unaligned(CheckpointType.CHECKPOINT, CHECKPOINT_LOCATION),
                         CheckpointOptions.notExactlyOnce(
-                                CheckpointSnapshotType.CHECKPOINT, CHECKPOINT_LOCATION))
+                                CheckpointType.CHECKPOINT, CHECKPOINT_LOCATION))
                 .flatMap(
                         options ->
                                 Stream.of(
@@ -232,8 +231,7 @@ class SourceOperatorStreamTaskTest extends SourceStreamTaskTestBase {
 
             int expectedEvents =
                     checkpointOptions.getCheckpointType().isSavepoint()
-                                    && ((SavepointSnapshotType)
-                                                    checkpointOptions.getCheckpointType())
+                                    && ((SavepointType) checkpointOptions.getCheckpointType())
                                             .isSynchronous()
                             ? numEventsBeforeCheckpoint
                             : totalNumEvents;
@@ -330,7 +328,7 @@ class SourceOperatorStreamTaskTest extends SourceStreamTaskTestBase {
                     testHarness.streamTask.triggerCheckpointAsync(
                             new CheckpointMetaData(2, 2),
                             CheckpointOptions.alignedNoTimeout(
-                                    SavepointSnapshotType.terminate(SavepointFormatType.CANONICAL),
+                                    SavepointType.terminate(SavepointFormatType.CANONICAL),
                                     SAVEPOINT_LOCATION));
             checkpointCompleted.whenComplete(
                     (ignored, exception) ->

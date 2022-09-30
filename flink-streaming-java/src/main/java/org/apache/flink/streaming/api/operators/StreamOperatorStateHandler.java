@@ -31,7 +31,7 @@ import org.apache.flink.core.fs.CloseableRegistry;
 import org.apache.flink.runtime.checkpoint.CheckpointException;
 import org.apache.flink.runtime.checkpoint.CheckpointFailureReason;
 import org.apache.flink.runtime.checkpoint.CheckpointOptions;
-import org.apache.flink.runtime.checkpoint.SavepointSnapshotType;
+import org.apache.flink.runtime.checkpoint.SavepointType;
 import org.apache.flink.runtime.checkpoint.SnapshotType;
 import org.apache.flink.runtime.state.AbstractKeyedStateBackend;
 import org.apache.flink.runtime.state.CheckpointStreamFactory;
@@ -275,8 +275,7 @@ public class StreamOperatorStateHandler {
 
     private boolean isCanonicalSavepoint(SnapshotType snapshotType) {
         return snapshotType.isSavepoint()
-                && ((SavepointSnapshotType) snapshotType).getFormatType()
-                        == SavepointFormatType.CANONICAL;
+                && ((SavepointType) snapshotType).getFormatType() == SavepointFormatType.CANONICAL;
     }
 
     @Nonnull

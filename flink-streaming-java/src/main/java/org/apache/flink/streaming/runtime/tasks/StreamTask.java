@@ -35,8 +35,8 @@ import org.apache.flink.runtime.checkpoint.CheckpointFailureReason;
 import org.apache.flink.runtime.checkpoint.CheckpointMetaData;
 import org.apache.flink.runtime.checkpoint.CheckpointMetricsBuilder;
 import org.apache.flink.runtime.checkpoint.CheckpointOptions;
-import org.apache.flink.runtime.checkpoint.CheckpointSnapshotType;
-import org.apache.flink.runtime.checkpoint.SavepointSnapshotType;
+import org.apache.flink.runtime.checkpoint.CheckpointType;
+import org.apache.flink.runtime.checkpoint.SavepointType;
 import org.apache.flink.runtime.checkpoint.SnapshotType;
 import org.apache.flink.runtime.checkpoint.channel.ChannelStateWriter;
 import org.apache.flink.runtime.checkpoint.channel.InputChannelInfo;
@@ -1305,12 +1305,11 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>>
     }
 
     private boolean isSynchronous(SnapshotType checkpointType) {
-        return checkpointType.isSavepoint()
-                && ((SavepointSnapshotType) checkpointType).isSynchronous();
+        return checkpointType.isSavepoint() && ((SavepointType) checkpointType).isSynchronous();
     }
 
     private void checkForcedFullSnapshotSupport(CheckpointOptions checkpointOptions) {
-        if (checkpointOptions.getCheckpointType().equals(CheckpointSnapshotType.FULL_CHECKPOINT)
+        if (checkpointOptions.getCheckpointType().equals(CheckpointType.FULL_CHECKPOINT)
                 && !stateBackend.supportsNoClaimRestoreMode()) {
             throw new IllegalStateException(
                     String.format(
@@ -1322,13 +1321,12 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>>
                             RestoreMode.CLAIM,
                             RestoreMode.LEGACY));
         } else if (checkpointOptions.getCheckpointType().isSavepoint()) {
-            SavepointSnapshotType savepointSnapshotType =
-                    (SavepointSnapshotType) checkpointOptions.getCheckpointType();
-            if (!stateBackend.supportsSavepointFormat(savepointSnapshotType.getFormatType())) {
+            SavepointType savepointType = (SavepointType) checkpointOptions.getCheckpointType();
+            if (!stateBackend.supportsSavepointFormat(savepointType.getFormatType())) {
                 throw new IllegalStateException(
                         String.format(
                                 "Configured state backend (%s) does not support %s savepoints",
-                                stateBackend, savepointSnapshotType.getFormatType()));
+                                stateBackend, savepointType.getFormatType()));
             }
         }
     }

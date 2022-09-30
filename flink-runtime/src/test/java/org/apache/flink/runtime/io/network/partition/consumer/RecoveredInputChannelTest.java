@@ -20,7 +20,7 @@ package org.apache.flink.runtime.io.network.partition.consumer;
 
 import org.apache.flink.metrics.SimpleCounter;
 import org.apache.flink.runtime.checkpoint.CheckpointException;
-import org.apache.flink.runtime.checkpoint.CheckpointSnapshotType;
+import org.apache.flink.runtime.checkpoint.CheckpointType;
 import org.apache.flink.runtime.io.network.api.CheckpointBarrier;
 import org.apache.flink.runtime.io.network.partition.ResultPartitionID;
 
@@ -49,9 +49,7 @@ public class RecoveredInputChannelTest {
         buildChannel()
                 .checkpointStarted(
                         new CheckpointBarrier(
-                                0L,
-                                0L,
-                                unaligned(CheckpointSnapshotType.CHECKPOINT, getDefault())));
+                                0L, 0L, unaligned(CheckpointType.CHECKPOINT, getDefault())));
     }
 
     private RecoveredInputChannel buildChannel() {

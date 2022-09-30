@@ -248,8 +248,7 @@ public class CheckpointOptions implements Serializable {
 
     private static final CheckpointOptions CHECKPOINT_AT_DEFAULT_LOCATION =
             new CheckpointOptions(
-                    CheckpointSnapshotType.CHECKPOINT,
-                    CheckpointStorageLocationReference.getDefault());
+                    CheckpointType.CHECKPOINT, CheckpointStorageLocationReference.getDefault());
 
     @VisibleForTesting
     public static CheckpointOptions forCheckpointWithDefaultLocation() {

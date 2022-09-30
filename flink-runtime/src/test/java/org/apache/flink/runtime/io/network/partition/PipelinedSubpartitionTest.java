@@ -21,7 +21,7 @@ package org.apache.flink.runtime.io.network.partition;
 import org.apache.flink.core.memory.MemorySegment;
 import org.apache.flink.core.memory.MemorySegmentFactory;
 import org.apache.flink.runtime.checkpoint.CheckpointOptions;
-import org.apache.flink.runtime.checkpoint.CheckpointSnapshotType;
+import org.apache.flink.runtime.checkpoint.CheckpointType;
 import org.apache.flink.runtime.checkpoint.channel.ChannelStateWriter;
 import org.apache.flink.runtime.event.AbstractEvent;
 import org.apache.flink.runtime.execution.CancelTaskException;
@@ -469,7 +469,7 @@ public class PipelinedSubpartitionTest extends SubpartitionTestBase {
     private BufferConsumer getTimeoutableBarrierBuffer(long checkpointId) throws IOException {
         CheckpointOptions checkpointOptions =
                 CheckpointOptions.alignedWithTimeout(
-                        CheckpointSnapshotType.CHECKPOINT,
+                        CheckpointType.CHECKPOINT,
                         CheckpointStorageLocationReference.getDefault(),
                         1000);
         return EventSerializer.toBufferConsumer(

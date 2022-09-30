@@ -23,7 +23,7 @@ import org.apache.flink.core.memory.MemorySegmentFactory;
 import org.apache.flink.core.testutils.OneShotLatch;
 import org.apache.flink.runtime.checkpoint.CheckpointException;
 import org.apache.flink.runtime.checkpoint.CheckpointOptions;
-import org.apache.flink.runtime.checkpoint.CheckpointSnapshotType;
+import org.apache.flink.runtime.checkpoint.CheckpointType;
 import org.apache.flink.runtime.checkpoint.channel.ChannelStateWriter;
 import org.apache.flink.runtime.checkpoint.channel.InputChannelInfo;
 import org.apache.flink.runtime.execution.CancelTaskException;
@@ -91,7 +91,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static org.apache.flink.runtime.checkpoint.CheckpointOptions.alignedWithTimeout;
-import static org.apache.flink.runtime.checkpoint.CheckpointSnapshotType.CHECKPOINT;
+import static org.apache.flink.runtime.checkpoint.CheckpointType.CHECKPOINT;
 import static org.apache.flink.runtime.io.network.api.serialization.EventSerializer.toBuffer;
 import static org.apache.flink.runtime.io.network.buffer.BufferBuilderTestUtils.buildSingleBuffer;
 import static org.apache.flink.runtime.io.network.partition.AvailabilityUtil.assertAvailability;
@@ -126,9 +126,9 @@ public class RemoteInputChannelTest {
 
     private static final long CHECKPOINT_ID = 1L;
     private static final CheckpointOptions UNALIGNED =
-            CheckpointOptions.unaligned(CheckpointSnapshotType.CHECKPOINT, getDefault());
+            CheckpointOptions.unaligned(CheckpointType.CHECKPOINT, getDefault());
     private static final CheckpointOptions ALIGNED_WITH_TIMEOUT =
-            alignedWithTimeout(CheckpointSnapshotType.CHECKPOINT, getDefault(), 10);
+            alignedWithTimeout(CheckpointType.CHECKPOINT, getDefault(), 10);
 
     @Test
     public void testGateNotifiedOnBarrierConversion() throws IOException, InterruptedException {
@@ -154,7 +154,7 @@ public class RemoteInputChannelTest {
                                     1L,
                                     123L,
                                     alignedWithTimeout(
-                                            CheckpointSnapshotType.CHECKPOINT,
+                                            CheckpointType.CHECKPOINT,
                                             getDefault(),
                                             Integer.MAX_VALUE)),
                             false),
@@ -223,8 +223,7 @@ public class RemoteInputChannelTest {
                 new CheckpointBarrier(
                         42,
                         System.currentTimeMillis(),
-                        CheckpointOptions.unaligned(
-                                CheckpointSnapshotType.CHECKPOINT, getDefault())));
+                        CheckpointOptions.unaligned(CheckpointType.CHECKPOINT, getDefault())));
 
         final Buffer buffer = createBuffer(TestBufferFactory.BUFFER_SIZE);
 
@@ -1457,7 +1456,7 @@ public class RemoteInputChannelTest {
                                 1L,
                                 123L,
                                 alignedWithTimeout(
-                                        CheckpointSnapshotType.CHECKPOINT,
+                                        CheckpointType.CHECKPOINT,
                                         getDefault(),
                                         Integer.MAX_VALUE)),
                         false);

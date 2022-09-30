@@ -23,13 +23,13 @@ import org.apache.flink.core.execution.SavepointFormatType;
 import java.util.Objects;
 
 /** The type of checkpoint to perform. */
-public class SavepointSnapshotType implements SnapshotType {
+public class SavepointType implements SnapshotType {
 
     private final String name;
     private final PostCheckpointAction postCheckpointAction;
     private final SavepointFormatType formatType;
 
-    private SavepointSnapshotType(
+    private SavepointType(
             final String name,
             final PostCheckpointAction postCheckpointAction,
             final SavepointFormatType formatType) {
@@ -38,18 +38,16 @@ public class SavepointSnapshotType implements SnapshotType {
         this.formatType = formatType;
     }
 
-    public static SavepointSnapshotType savepoint(SavepointFormatType formatType) {
-        return new SavepointSnapshotType("Savepoint", PostCheckpointAction.NONE, formatType);
+    public static SavepointType savepoint(SavepointFormatType formatType) {
+        return new SavepointType("Savepoint", PostCheckpointAction.NONE, formatType);
     }
 
-    public static SavepointSnapshotType terminate(SavepointFormatType formatType) {
-        return new SavepointSnapshotType(
-                "Terminate Savepoint", PostCheckpointAction.TERMINATE, formatType);
+    public static SavepointType terminate(SavepointFormatType formatType) {
+        return new SavepointType("Terminate Savepoint", PostCheckpointAction.TERMINATE, formatType);
     }
 
-    public static SavepointSnapshotType suspend(SavepointFormatType formatType) {
-        return new SavepointSnapshotType(
-                "Suspend Savepoint", PostCheckpointAction.SUSPEND, formatType);
+    public static SavepointType suspend(SavepointFormatType formatType) {
+        return new SavepointType("Suspend Savepoint", PostCheckpointAction.SUSPEND, formatType);
     }
 
     public boolean isSavepoint() {
@@ -96,7 +94,7 @@ public class SavepointSnapshotType implements SnapshotType {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        SavepointSnapshotType that = (SavepointSnapshotType) o;
+        SavepointType that = (SavepointType) o;
         return name.equals(that.name)
                 && postCheckpointAction == that.postCheckpointAction
                 && formatType == that.formatType;

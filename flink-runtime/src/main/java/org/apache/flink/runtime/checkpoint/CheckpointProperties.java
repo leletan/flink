@@ -186,7 +186,7 @@ public class CheckpointProperties implements Serializable {
      *     </code> otherwise.
      */
     public boolean isSynchronous() {
-        return isSavepoint() && ((SavepointSnapshotType) checkpointType).isSynchronous();
+        return isSavepoint() && ((SavepointType) checkpointType).isSynchronous();
     }
 
     // ------------------------------------------------------------------------
@@ -250,7 +250,7 @@ public class CheckpointProperties implements Serializable {
     private static final CheckpointProperties CHECKPOINT_NEVER_RETAINED =
             new CheckpointProperties(
                     false,
-                    CheckpointSnapshotType.CHECKPOINT,
+                    CheckpointType.CHECKPOINT,
                     true,
                     true, // Delete on success
                     true, // Delete on cancellation
@@ -261,7 +261,7 @@ public class CheckpointProperties implements Serializable {
     private static final CheckpointProperties CHECKPOINT_RETAINED_ON_FAILURE =
             new CheckpointProperties(
                     false,
-                    CheckpointSnapshotType.CHECKPOINT,
+                    CheckpointType.CHECKPOINT,
                     true,
                     true, // Delete on success
                     true, // Delete on cancellation
@@ -272,7 +272,7 @@ public class CheckpointProperties implements Serializable {
     private static final CheckpointProperties CHECKPOINT_RETAINED_ON_CANCELLATION =
             new CheckpointProperties(
                     false,
-                    CheckpointSnapshotType.CHECKPOINT,
+                    CheckpointType.CHECKPOINT,
                     true,
                     true, // Delete on success
                     false, // Retain on cancellation
@@ -292,7 +292,7 @@ public class CheckpointProperties implements Serializable {
             boolean forced, SavepointFormatType formatType) {
         return new CheckpointProperties(
                 forced,
-                SavepointSnapshotType.savepoint(formatType),
+                SavepointType.savepoint(formatType),
                 false,
                 false,
                 false,
@@ -314,7 +314,7 @@ public class CheckpointProperties implements Serializable {
                 // unclaimed snapshot is similar to a savepoint
                 // we do not care about the format when restoring, the format is
                 // necessary when triggering a savepoint
-                SavepointSnapshotType.savepoint(SavepointFormatType.CANONICAL),
+                SavepointType.savepoint(SavepointFormatType.CANONICAL),
                 false,
                 false,
                 false,
@@ -327,9 +327,7 @@ public class CheckpointProperties implements Serializable {
             boolean forced, boolean terminate, SavepointFormatType formatType) {
         return new CheckpointProperties(
                 forced,
-                terminate
-                        ? SavepointSnapshotType.terminate(formatType)
-                        : SavepointSnapshotType.suspend(formatType),
+                terminate ? SavepointType.terminate(formatType) : SavepointType.suspend(formatType),
                 false,
                 false,
                 false,

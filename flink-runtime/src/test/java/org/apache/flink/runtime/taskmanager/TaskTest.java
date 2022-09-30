@@ -25,7 +25,7 @@ import org.apache.flink.core.testutils.OneShotLatch;
 import org.apache.flink.runtime.checkpoint.CheckpointFailureReason;
 import org.apache.flink.runtime.checkpoint.CheckpointMetaData;
 import org.apache.flink.runtime.checkpoint.CheckpointOptions;
-import org.apache.flink.runtime.checkpoint.CheckpointSnapshotType;
+import org.apache.flink.runtime.checkpoint.CheckpointType;
 import org.apache.flink.runtime.deployment.InputGateDeploymentDescriptor;
 import org.apache.flink.runtime.deployment.ResultPartitionDeploymentDescriptor;
 import org.apache.flink.runtime.execution.CancelTaskException;
@@ -1199,8 +1199,7 @@ public class TaskTest extends TestLogger {
             CheckpointFailureReason failureReason) {
         CheckpointOptions checkpointOptions =
                 CheckpointOptions.alignedNoTimeout(
-                        CheckpointSnapshotType.CHECKPOINT,
-                        CheckpointStorageLocationReference.getDefault());
+                        CheckpointType.CHECKPOINT, CheckpointStorageLocationReference.getDefault());
         task.triggerCheckpointBarrier(checkpointId, 1, checkpointOptions);
 
         assertEquals(1, testCheckpointResponder.getDeclineReports().size());

@@ -28,7 +28,7 @@ import org.apache.flink.api.common.state.StateDescriptor;
 import org.apache.flink.api.common.typeutils.TypeSerializer;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.runtime.checkpoint.CheckpointOptions;
-import org.apache.flink.runtime.checkpoint.CheckpointSnapshotType;
+import org.apache.flink.runtime.checkpoint.CheckpointType;
 import org.apache.flink.runtime.state.AbstractKeyedStateBackend;
 import org.apache.flink.runtime.state.CheckpointStateOutputStream;
 import org.apache.flink.runtime.state.CheckpointStorageLocationReference;
@@ -120,8 +120,7 @@ public class ChangelogKeyedStateBackend<K>
      */
     private static final CheckpointOptions CHECKPOINT_OPTIONS =
             new CheckpointOptions(
-                    CheckpointSnapshotType.CHECKPOINT,
-                    CheckpointStorageLocationReference.getDefault());
+                    CheckpointType.CHECKPOINT, CheckpointStorageLocationReference.getDefault());
 
     /** delegated keyedStateBackend. */
     private final AbstractKeyedStateBackend<K> keyedStateBackend;

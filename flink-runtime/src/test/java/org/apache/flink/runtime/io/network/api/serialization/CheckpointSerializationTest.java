@@ -20,8 +20,8 @@ package org.apache.flink.runtime.io.network.api.serialization;
 
 import org.apache.flink.core.execution.SavepointFormatType;
 import org.apache.flink.runtime.checkpoint.CheckpointOptions;
-import org.apache.flink.runtime.checkpoint.CheckpointSnapshotType;
-import org.apache.flink.runtime.checkpoint.SavepointSnapshotType;
+import org.apache.flink.runtime.checkpoint.CheckpointType;
+import org.apache.flink.runtime.checkpoint.SavepointType;
 import org.apache.flink.runtime.io.network.api.CheckpointBarrier;
 import org.apache.flink.runtime.state.CheckpointStorageLocationReference;
 
@@ -46,7 +46,7 @@ public class CheckpointSerializationTest {
     public void testSuspendingCheckpointBarrierSerialization() throws Exception {
         CheckpointOptions suspendSavepointToSerialize =
                 new CheckpointOptions(
-                        SavepointSnapshotType.suspend(SavepointFormatType.CANONICAL),
+                        SavepointType.suspend(SavepointFormatType.CANONICAL),
                         new CheckpointStorageLocationReference(STORAGE_LOCATION_REF));
         testCheckpointBarrierSerialization(suspendSavepointToSerialize);
     }
@@ -55,7 +55,7 @@ public class CheckpointSerializationTest {
     public void testSavepointBarrierSerialization() throws Exception {
         CheckpointOptions savepointToSerialize =
                 new CheckpointOptions(
-                        SavepointSnapshotType.savepoint(SavepointFormatType.CANONICAL),
+                        SavepointType.savepoint(SavepointFormatType.CANONICAL),
                         new CheckpointStorageLocationReference(STORAGE_LOCATION_REF));
         testCheckpointBarrierSerialization(savepointToSerialize);
     }
@@ -64,7 +64,7 @@ public class CheckpointSerializationTest {
     public void testCheckpointBarrierSerialization() throws Exception {
         CheckpointOptions checkpointToSerialize =
                 new CheckpointOptions(
-                        CheckpointSnapshotType.CHECKPOINT,
+                        CheckpointType.CHECKPOINT,
                         new CheckpointStorageLocationReference(STORAGE_LOCATION_REF));
         testCheckpointBarrierSerialization(checkpointToSerialize);
     }
@@ -73,7 +73,7 @@ public class CheckpointSerializationTest {
     public void testFullCheckpointBarrierSerialization() throws Exception {
         CheckpointOptions checkpointToSerialize =
                 new CheckpointOptions(
-                        CheckpointSnapshotType.FULL_CHECKPOINT,
+                        CheckpointType.FULL_CHECKPOINT,
                         new CheckpointStorageLocationReference(STORAGE_LOCATION_REF));
         testCheckpointBarrierSerialization(checkpointToSerialize);
     }

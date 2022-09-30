@@ -21,8 +21,8 @@ package org.apache.flink.streaming.runtime.tasks;
 import org.apache.flink.annotation.Internal;
 import org.apache.flink.runtime.checkpoint.CheckpointMetaData;
 import org.apache.flink.runtime.checkpoint.CheckpointOptions;
-import org.apache.flink.runtime.checkpoint.CheckpointSnapshotType;
-import org.apache.flink.runtime.checkpoint.SavepointSnapshotType;
+import org.apache.flink.runtime.checkpoint.CheckpointType;
+import org.apache.flink.runtime.checkpoint.SavepointType;
 import org.apache.flink.runtime.checkpoint.SnapshotType;
 import org.apache.flink.runtime.execution.CancelTaskException;
 import org.apache.flink.runtime.execution.Environment;
@@ -133,7 +133,7 @@ public class SourceStreamTask<
                             // notification
                             final CheckpointOptions checkpointOptions =
                                     CheckpointOptions.forConfig(
-                                            CheckpointSnapshotType.CHECKPOINT,
+                                            CheckpointType.CHECKPOINT,
                                             CheckpointStorageLocationReference.getDefault(),
                                             configuration.isExactlyOnceCheckpointMode(),
                                             configuration.isUnalignedCheckpointsEnabled(),
@@ -261,9 +261,7 @@ public class SourceStreamTask<
             } else {
                 return super.triggerCheckpointAsync(checkpointMetaData, checkpointOptions);
             }
-        } else if (checkpointOptions
-                .getCheckpointType()
-                .equals(CheckpointSnapshotType.FULL_CHECKPOINT)) {
+        } else if (checkpointOptions.getCheckpointType().equals(CheckpointType.FULL_CHECKPOINT)) {
             // see FLINK-25256
             throw new IllegalStateException(
                     "Using externally induced sources, we can not enforce taking a full checkpoint."
@@ -278,7 +276,7 @@ public class SourceStreamTask<
     }
 
     private boolean isSynchronousSavepoint(SnapshotType snapshotType) {
-        return snapshotType.isSavepoint() && ((SavepointSnapshotType) snapshotType).isSynchronous();
+        return snapshotType.isSavepoint() && ((SavepointType) snapshotType).isSynchronous();
     }
 
     private CompletableFuture<Boolean> triggerStopWithSavepointAsync(
@@ -287,7 +285,7 @@ public class SourceStreamTask<
                 () ->
                         stopOperatorForStopWithSavepoint(
                                 checkpointMetaData.getCheckpointId(),
-                                ((SavepointSnapshotType) checkpointOptions.getCheckpointType())
+                                ((SavepointType) checkpointOptions.getCheckpointType())
                                         .shouldDrain()),
                 "stop legacy source for stop-with-savepoint --drain");
         return sourceThread

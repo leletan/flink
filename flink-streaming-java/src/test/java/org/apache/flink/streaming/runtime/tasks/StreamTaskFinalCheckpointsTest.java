@@ -29,8 +29,8 @@ import org.apache.flink.runtime.checkpoint.CheckpointMetaData;
 import org.apache.flink.runtime.checkpoint.CheckpointMetrics;
 import org.apache.flink.runtime.checkpoint.CheckpointMetricsBuilder;
 import org.apache.flink.runtime.checkpoint.CheckpointOptions;
-import org.apache.flink.runtime.checkpoint.CheckpointSnapshotType;
-import org.apache.flink.runtime.checkpoint.SavepointSnapshotType;
+import org.apache.flink.runtime.checkpoint.CheckpointType;
+import org.apache.flink.runtime.checkpoint.SavepointType;
 import org.apache.flink.runtime.checkpoint.TaskStateSnapshot;
 import org.apache.flink.runtime.executiongraph.ExecutionAttemptID;
 import org.apache.flink.runtime.io.network.api.CheckpointBarrier;
@@ -498,7 +498,7 @@ public class StreamTaskFinalCheckpointsTest {
     public void testTriggeringAlignedNoTimeoutCheckpointWithFinishedChannels() throws Exception {
         testTriggeringCheckpointWithFinishedChannels(
                 CheckpointOptions.alignedNoTimeout(
-                        CheckpointSnapshotType.CHECKPOINT,
+                        CheckpointType.CHECKPOINT,
                         CheckpointStorageLocationReference.getDefault()));
     }
 
@@ -506,7 +506,7 @@ public class StreamTaskFinalCheckpointsTest {
     public void testTriggeringUnalignedCheckpointWithFinishedChannels() throws Exception {
         testTriggeringCheckpointWithFinishedChannels(
                 CheckpointOptions.unaligned(
-                        CheckpointSnapshotType.CHECKPOINT,
+                        CheckpointType.CHECKPOINT,
                         CheckpointStorageLocationReference.getDefault()));
     }
 
@@ -514,7 +514,7 @@ public class StreamTaskFinalCheckpointsTest {
     public void testTriggeringAlignedWithTimeoutCheckpointWithFinishedChannels() throws Exception {
         testTriggeringCheckpointWithFinishedChannels(
                 CheckpointOptions.alignedWithTimeout(
-                        CheckpointSnapshotType.CHECKPOINT,
+                        CheckpointType.CHECKPOINT,
                         CheckpointStorageLocationReference.getDefault(),
                         10L));
     }
@@ -692,23 +692,19 @@ public class StreamTaskFinalCheckpointsTest {
     static CompletableFuture<Boolean> triggerStopWithSavepointDrain(
             StreamTaskMailboxTestHarness<String> testHarness, long checkpointId) {
         return triggerStopWithSavepoint(
-                testHarness,
-                checkpointId,
-                SavepointSnapshotType.terminate(SavepointFormatType.CANONICAL));
+                testHarness, checkpointId, SavepointType.terminate(SavepointFormatType.CANONICAL));
     }
 
     static CompletableFuture<Boolean> triggerStopWithSavepointNoDrain(
             StreamTaskMailboxTestHarness<String> testHarness, long checkpointId) {
         return triggerStopWithSavepoint(
-                testHarness,
-                checkpointId,
-                SavepointSnapshotType.suspend(SavepointFormatType.CANONICAL));
+                testHarness, checkpointId, SavepointType.suspend(SavepointFormatType.CANONICAL));
     }
 
     static CompletableFuture<Boolean> triggerStopWithSavepoint(
             StreamTaskMailboxTestHarness<String> testHarness,
             long checkpointId,
-            SavepointSnapshotType checkpointType) {
+            SavepointType checkpointType) {
         testHarness.getTaskStateManager().getWaitForReportLatch().reset();
         return testHarness
                 .getStreamTask()
@@ -804,7 +800,7 @@ public class StreamTaskFinalCheckpointsTest {
             harness.getTaskStateManager().getWaitForReportLatch().reset();
             CheckpointMetaData checkpointMetaData = new CheckpointMetaData(2, 2);
             CheckpointOptions checkpointOptions =
-                    new CheckpointOptions(CheckpointSnapshotType.CHECKPOINT, getDefault());
+                    new CheckpointOptions(CheckpointType.CHECKPOINT, getDefault());
             harness.streamTask.triggerCheckpointOnBarrier(
                     checkpointMetaData,
                     checkpointOptions,
@@ -872,8 +868,7 @@ public class StreamTaskFinalCheckpointsTest {
                     new CheckpointBarrier(
                             2,
                             2,
-                            CheckpointOptions.unaligned(
-                                    CheckpointSnapshotType.CHECKPOINT, getDefault()));
+                            CheckpointOptions.unaligned(CheckpointType.CHECKPOINT, getDefault()));
 
             // On first unaligned barrier, the task would take snapshot and start the asynchronous
             // part. We slightly extend the process to make the asynchronous part start executing

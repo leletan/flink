@@ -22,7 +22,7 @@ import org.apache.flink.runtime.checkpoint.CheckpointException;
 import org.apache.flink.runtime.checkpoint.CheckpointMetaData;
 import org.apache.flink.runtime.checkpoint.CheckpointMetricsBuilder;
 import org.apache.flink.runtime.checkpoint.CheckpointOptions;
-import org.apache.flink.runtime.checkpoint.SavepointSnapshotType;
+import org.apache.flink.runtime.checkpoint.SavepointType;
 import org.apache.flink.runtime.checkpoint.SnapshotType;
 import org.apache.flink.runtime.checkpoint.channel.InputChannelInfo;
 import org.apache.flink.runtime.execution.Environment;
@@ -206,7 +206,7 @@ public class MultipleInputStreamTask<OUT>
     }
 
     private boolean isSynchronous(SnapshotType snapshotType) {
-        return snapshotType.isSavepoint() && ((SavepointSnapshotType) snapshotType).isSynchronous();
+        return snapshotType.isSavepoint() && ((SavepointType) snapshotType).isSynchronous();
     }
 
     private CompletableFuture<Boolean> triggerSourcesCheckpointAsync(
@@ -247,7 +247,7 @@ public class MultipleInputStreamTask<OUT>
 
         CompletableFuture<Void> sourcesStopped = new CompletableFuture<>();
         final StopMode stopMode =
-                ((SavepointSnapshotType) checkpointOptions.getCheckpointType()).shouldDrain()
+                ((SavepointType) checkpointOptions.getCheckpointType()).shouldDrain()
                         ? StopMode.DRAIN
                         : StopMode.NO_DRAIN;
         mainMailboxExecutor.execute(

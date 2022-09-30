@@ -19,12 +19,12 @@
 package org.apache.flink.runtime.rest.messages.checkpoints;
 
 import org.apache.flink.runtime.checkpoint.AbstractCheckpointStats;
-import org.apache.flink.runtime.checkpoint.CheckpointSnapshotType;
 import org.apache.flink.runtime.checkpoint.CheckpointStatsStatus;
+import org.apache.flink.runtime.checkpoint.CheckpointType;
 import org.apache.flink.runtime.checkpoint.CompletedCheckpointStats;
 import org.apache.flink.runtime.checkpoint.FailedCheckpointStats;
 import org.apache.flink.runtime.checkpoint.PendingCheckpointStats;
-import org.apache.flink.runtime.checkpoint.SavepointSnapshotType;
+import org.apache.flink.runtime.checkpoint.SavepointType;
 import org.apache.flink.runtime.checkpoint.SnapshotType;
 import org.apache.flink.runtime.checkpoint.TaskStateStats;
 import org.apache.flink.runtime.jobgraph.JobVertexID;
@@ -389,8 +389,8 @@ public class CheckpointStatistics implements ResponseBody {
     }
 
     /**
-     * Backward compatibility layer between internal {@link CheckpointSnapshotType} and a field used
-     * in {@link CheckpointStatistics}.
+     * Backward compatibility layer between internal {@link CheckpointType} and a field used in
+     * {@link CheckpointStatistics}.
      */
     enum RestAPICheckpointType {
         CHECKPOINT,
@@ -399,9 +399,8 @@ public class CheckpointStatistics implements ResponseBody {
 
         public static RestAPICheckpointType valueOf(SnapshotType checkpointType) {
             if (checkpointType.isSavepoint()) {
-                SavepointSnapshotType savepointSnapshotType =
-                        (SavepointSnapshotType) checkpointType;
-                return savepointSnapshotType.isSynchronous() ? SYNC_SAVEPOINT : SAVEPOINT;
+                SavepointType savepointType = (SavepointType) checkpointType;
+                return savepointType.isSynchronous() ? SYNC_SAVEPOINT : SAVEPOINT;
             } else {
                 return CHECKPOINT;
             }

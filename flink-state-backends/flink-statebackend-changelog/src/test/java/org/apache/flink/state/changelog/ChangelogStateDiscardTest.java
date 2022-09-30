@@ -73,7 +73,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 import static org.apache.flink.changelog.fs.StateChangeUploadScheduler.directScheduler;
-import static org.apache.flink.runtime.checkpoint.CheckpointSnapshotType.CHECKPOINT;
+import static org.apache.flink.runtime.checkpoint.CheckpointType.CHECKPOINT;
 import static org.apache.flink.runtime.state.SnapshotResult.empty;
 import static org.apache.flink.util.Preconditions.checkState;
 import static org.apache.flink.util.concurrent.Executors.directExecutor;

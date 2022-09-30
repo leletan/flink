@@ -34,7 +34,7 @@ public class RestoredCheckpointStatsTest {
         CheckpointProperties props =
                 new CheckpointProperties(
                         true,
-                        SavepointSnapshotType.savepoint(SavepointFormatType.CANONICAL),
+                        SavepointType.savepoint(SavepointFormatType.CANONICAL),
                         false,
                         false,
                         true,

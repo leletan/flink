@@ -63,7 +63,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
-import static org.apache.flink.runtime.checkpoint.CheckpointSnapshotType.CHECKPOINT;
+import static org.apache.flink.runtime.checkpoint.CheckpointType.CHECKPOINT;
 import static org.apache.flink.runtime.checkpoint.channel.ChannelStateWriter.SEQUENCE_NUMBER_UNKNOWN;
 import static org.apache.flink.runtime.io.network.buffer.Buffer.DataType.RECOVERY_COMPLETION;
 import static org.apache.flink.util.CloseableIterator.ofElements;

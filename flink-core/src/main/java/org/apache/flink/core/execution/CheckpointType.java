@@ -28,7 +28,6 @@ import static org.apache.flink.configuration.description.TextElement.text;
 /** Describes the type in which a checkpoint should be taken. */
 @PublicEvolving
 public enum CheckpointType implements DescribedEnum {
-
     FULL("A checkpoint type that checkpoints the entire state, common for all state backends."),
 
     INCREMENTAL(
